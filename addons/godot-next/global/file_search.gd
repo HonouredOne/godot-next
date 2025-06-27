@@ -1,12 +1,12 @@
-tool
+@tool
 class_name FileSearch
-extends Reference
+extends RefCounted
 # author: willnationsdev
 # license: MIT
 # description: A utility with helpful methods to search through one's project files (or any directory).
 
-class FileEvaluator extends Reference:
-	var file_path: String = "" setget set_file_path
+class FileEvaluator extends RefCounted:
+	var file_path: String = "": set = set_file_path
 
 	# Assigns a new file path to the object.
 	func _is_match() -> bool:
@@ -74,7 +74,7 @@ class FilesThatMatchRegex extends FileEvaluator:
 
 
 	func _get_value() -> Dictionary:
-		var data = ._get_value()
+		var data = super._get_value()
 		data.match = _match
 		return data
 
@@ -83,7 +83,7 @@ class FilesThatExtendResource extends FileEvaluator:
 	var _match_func: FuncRef
 	var _exts: Dictionary
 
-	func _init(p_types: PoolStringArray = PoolStringArray(["Resource"]), p_match_func: FuncRef = null, p_block_base_resource: bool = false):
+	func _init(p_types: PackedStringArray = PackedStringArray(["Resource"]), p_match_func: FuncRef = null, p_block_base_resource: bool = false):
 		_match_func = p_match_func
 		for type in p_types:
 			for a_ext in ResourceLoader.get_recognized_extensions_for_type(type):
@@ -138,7 +138,7 @@ static func search_types(p_match_func: FuncRef = null, p_from_dir: String = "res
 	return _search(FilesThatExtendResource.new(["Script", "PackedScene"], p_match_func), p_from_dir, p_recursive)
 
 
-static func search_resources(p_types: PoolStringArray = ["Resource"], p_match_func: FuncRef = null, p_from_dir: String = "res://", p_recursive: bool = true) -> Dictionary:
+static func search_resources(p_types: PackedStringArray = ["Resource"], p_match_func: FuncRef = null, p_from_dir: String = "res://", p_recursive: bool = true) -> Dictionary:
 	return _search(FilesThatExtendResource.new(p_types, p_match_func), p_from_dir, p_recursive)
 
 
@@ -151,18 +151,18 @@ static func _this() -> Script:
 # p_recursive: If true, scan all sub-directories, not just the given one.
 static func _search(p_evaluator: FileEvaluator, p_from_dir: String = "res://", p_recursive: bool = true) -> Dictionary:
 	var dirs: Array = [p_from_dir]
-	var dir: Directory = Directory.new()
+	var dir: DirAccess = DirAccess.new()
 	var data: Dictionary = {}
 	var eval: FileEvaluator = p_evaluator
 
 	# Generate 'data' map.
-	while not dirs.empty():
+	while not dirs.is_empty():
 		var dir_name = dirs.back()
 		dirs.pop_back()
 
 		if dir.open(dir_name) == OK:
 			#warning-ignore:return_value_discarded
-			dir.list_dir_begin()
+			dir.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 			var file_name = dir.get_next()
 			while file_name:
 				# Ignore hidden content.

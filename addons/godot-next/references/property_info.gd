@@ -1,6 +1,6 @@
-tool
+@tool
 class_name PropertyInfo
-extends Reference
+extends RefCounted
 # author: xdgamestudios
 # license: MIT
 # description:

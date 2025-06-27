@@ -1,6 +1,6 @@
-tool
+@tool
 class_name ClassType
-extends Reference
+extends RefCounted
 # author: willnationsdev
 # license: MIT
 # description:
@@ -76,9 +76,9 @@ enum Source {
 	ANONYMOUS,
 }
 
-export var name: String = "" setget set_name, get_name
-export(String, FILE) var path: String = "" setget set_path, get_path
-export(Resource) var res: Resource = null setget set_res, get_res
+@export var name: String = "": get = get_name, set = set_name
+@export var path: String = "": get = get_path, set = set_path # (String, FILE)
+@export var res: Resource = null: get = get_res, set = set_res
 
 var _source: int = Source.NONE
 
@@ -210,12 +210,12 @@ func is_type(p_other) -> bool:
 # Instantiate whatever type the ClassType refers to.
 func instance() -> Object:
 	if _source == Source.ENGINE:
-		return ClassDB.instance(name)
+		return ClassDB.instantiate(name)
 	if res:
 		if res is Script:
 			return res.new()
 		if res is PackedScene:
-			return res.instance()
+			return res.instantiate()
 	return null
 
 
@@ -293,7 +293,7 @@ func as_scene() -> PackedScene:
 
 
 # Get inherited engine class as ClassType.
-func get_engine_parent() -> Reference:
+func get_engine_parent() -> RefCounted:
 	var ret := _new()
 	if _source == Source.SCRIPT:
 		ret.name = get_engine_class()
@@ -303,7 +303,7 @@ func get_engine_parent() -> Reference:
 
 
 # Get inherited script resource as ClassType.
-func get_script_parent() -> Reference:
+func get_script_parent() -> RefCounted:
 	var ret := _new()
 	if _source == Source.ENGINE:
 		ret.name = ""
@@ -323,7 +323,7 @@ func get_script_parent() -> Reference:
 
 
 # Get inherited scene resource as ClassType.
-func get_scene_parent() -> Reference:
+func get_scene_parent() -> RefCounted:
 	var ret := _new()
 	match _source:
 		Source.ENGINE, Source.SCRIPT:
@@ -335,7 +335,7 @@ func get_scene_parent() -> Reference:
 
 
 # Get inherited resource or engine class as ClassType.
-func get_type_parent() -> Reference:
+func get_type_parent() -> RefCounted:
 	var ret = get_scene_parent()
 	if ret.is_valid():
 		return ret
@@ -395,12 +395,12 @@ func get_type_script() -> Script:
 
 # Wrapper for the base engine class's `can_instance()` method.
 # This is specific for the engine and does not relate to abstract-ness.
-func can_instance() -> bool:
+func can_instantiate() -> bool:
 	if _source == Source.ENGINE:
-		return ClassDB.can_instance(name)
+		return ClassDB.can_instantiate(name)
 	var script = get_type_script()
 	if script:
-		return script.can_instance()
+		return script.can_instantiate()
 	return false
 
 
@@ -411,9 +411,9 @@ func is_object_instance_of(p_object) -> bool:
 
 # Generate a list of named classes that extend the represented class or
 # resource. SLOW
-func get_inheritors_list() -> PoolStringArray:
+func get_inheritors_list() -> PackedStringArray:
 	var class_list = get_class_list()
-	var ret := PoolStringArray()
+	var ret := PackedStringArray()
 	for a_class in class_list:
 		if a_class != name and static_is_type(a_class, name, _get_map()):
 			ret.append(a_class)
@@ -421,10 +421,10 @@ func get_inheritors_list() -> PoolStringArray:
 
 
 # Same as get_inheritors_list, but it includes all resources. SLOW
-func get_deep_inheritors_list() -> PoolStringArray:
+func get_deep_inheritors_list() -> PackedStringArray:
 	_fetch_deep_type_map()
-	var class_list := PoolStringArray(_deep_type_map.keys())
-	var ret := PoolStringArray()
+	var class_list := PackedStringArray(_deep_type_map.keys())
+	var ret := PackedStringArray()
 	for a_class in class_list:
 		if a_class != name and static_is_type(a_class, name, _get_map()):
 			ret.append(a_class)
@@ -432,29 +432,29 @@ func get_deep_inheritors_list() -> PoolStringArray:
 
 
 # Generate a list of engine class names.
-func get_engine_class_list() -> PoolStringArray:
+func get_engine_class_list() -> PackedStringArray:
 	return ClassDB.get_class_list()
 
 
 # Generate a list of script class names.
-func get_script_class_list() -> PoolStringArray:
+func get_script_class_list() -> PackedStringArray:
 	_fetch_script_map()
-	return PoolStringArray(_script_map.keys())
+	return PackedStringArray(_script_map.keys())
 
 
 # Generate a list of all named classes.
-func get_class_list() -> PoolStringArray:
-	var class_list := PoolStringArray()
+func get_class_list() -> PackedStringArray:
+	var class_list := PackedStringArray()
 	class_list.append_array(get_engine_class_list())
 	class_list.append_array(get_script_class_list())
 	return class_list
 
 
 # Generate a list of class names.
-func get_deep_class_list() -> PoolStringArray:
+func get_deep_class_list() -> PackedStringArray:
 	_fetch_deep_type_map()
-	var class_list := PoolStringArray(_deep_type_map.keys())
-	class_list.append_array(PoolStringArray(get_engine_class_list()))
+	var class_list := PackedStringArray(_deep_type_map.keys())
+	class_list.append_array(PackedStringArray(get_engine_class_list()))
 	return class_list
 
 
@@ -462,37 +462,37 @@ func get_deep_class_list() -> PoolStringArray:
 func _get_map() -> Dictionary:
 	var map := {}
 	# Don't initialize unless player has already done so.
-	if not _deep_type_map.empty():
+	if not _deep_type_map.is_empty():
 		map = _deep_type_map
 	# If we aren't using the deep map, then get the standard one.
-	if map.empty():
+	if map.is_empty():
 		_fetch_script_map()
 		map = _script_map
 	return map
 
 
 # Generate a list of all engine and resource names.
-static func static_get_engine_class_list() -> PoolStringArray:
+static func static_get_engine_class_list() -> PackedStringArray:
 	return ClassDB.get_class_list()
 
 
 # Generate a list of script class names.
-static func static_get_script_class_list() -> PoolStringArray:
-	return PoolStringArray(_get_script_map().keys())
+static func static_get_script_class_list() -> PackedStringArray:
+	return PackedStringArray(_get_script_map().keys())
 
 
 # Generate a list of all named classes.
-static func static_get_class_list() -> PoolStringArray:
-	var class_list := PoolStringArray()
+static func static_get_class_list() -> PackedStringArray:
+	var class_list := PackedStringArray()
 	class_list.append_array(static_get_engine_class_list())
 	class_list.append_array(static_get_script_class_list())
 	return class_list
 
 
 # Generate a list of all engine and resource names.
-static func static_get_deep_class_list() -> PoolStringArray:
+static func static_get_deep_class_list() -> PackedStringArray:
 	var _deep_type_map = _get_deep_type_map()
-	var class_list := PoolStringArray(_deep_type_map.keys())
+	var class_list := PackedStringArray(_deep_type_map.keys())
 	class_list.append_array(static_get_engine_class_list())
 	return class_list
 
@@ -503,7 +503,7 @@ static func static_is_object_instance_of(p_object, p_type, p_map: Dictionary = {
 		return false
 	var node := p_object as Node
 	var map = p_map
-	if map.empty():
+	if map.is_empty():
 		map = _get_script_map()
 	if node and node.filename:
 		return static_is_type(load(node.filename), p_type, map)
@@ -523,7 +523,7 @@ static func static_is_type(p_type, p_other, p_map: Dictionary = {}) -> bool:
 	if not p_type:
 		return false
 	var map = {}
-	if p_map.empty():
+	if p_map.is_empty():
 		map = _get_script_map()
 	else:
 		map = p_map
@@ -591,28 +591,28 @@ static func static_is_type(p_type, p_other, p_map: Dictionary = {}) -> bool:
 
 
 # ClassType.new(p_name), but for clarity.
-static func from_name(p_name: String) -> Reference:
+static func from_name(p_name: String) -> RefCounted:
 	var ret := _new()
 	ret._init_from_name(p_name)
 	return ret
 
 
 # ClassType.new(p_path), but for clarity.
-static func from_path(p_path: String) -> Reference:
+static func from_path(p_path: String) -> RefCounted:
 	var ret := _new()
 	ret._init_from_path(p_path)
 	return ret
 
 
 # ClassType.new(p_object), but for clarity.
-static func from_object(p_object: Object) -> Reference:
+static func from_object(p_object: Object) -> RefCounted:
 	var ret := _new()
 	ret._init_from_object(p_object)
 	return ret
 
 
 # Utility function to create from `get_deep_type_map()` values.
-static func from_type_dict(p_data: Dictionary) -> Reference:
+static func from_type_dict(p_data: Dictionary) -> RefCounted:
 	var ret := _new()
 	match p_data.type:
 		"Engine":
@@ -663,7 +663,7 @@ func _init_from_path(p_path: String) -> void:
 	path = p_path
 	res = load(path) if ResourceLoader.exists(path) else null
 	_fetch_script_map()
-	if not _deep_path_map.empty() and _deep_path_map.has(p_path):
+	if not _deep_path_map.is_empty() and _deep_path_map.has(p_path):
 		name = _deep_path_map[p_path]
 		_source = Source.ANONYMOUS
 		if _script_map.has(name):
@@ -721,12 +721,12 @@ func _init_from_object(p_object: Object) -> void:
 
 
 func _connect_script_updates() -> void:
-	if Engine.editor_hint and not _is_filesystem_connected:
+	if Engine.is_editor_hint() and not _is_filesystem_connected:
 		var ep: EditorPlugin = EditorPlugin.new()
 		var fs: EditorFileSystem = ep.get_editor_interface().get_resource_filesystem()
-		if not fs.is_connected("filesystem_changed", self, "set"):
+		if not fs.is_connected("filesystem_changed", Callable(self, "set")):
 			#warning-ignore:return_value_discarded
-			fs.connect("filesystem_changed", self, "set", ["_script_map_dirty", true])
+			fs.connect("filesystem_changed", Callable(self, "set").bind("_script_map_dirty", true))
 		ep.free()
 		_is_filesystem_connected = true
 
@@ -763,7 +763,7 @@ static func _get_script_map() -> Dictionary:
 
 # Same as _fetch_script_map, but it includes all resources
 func _fetch_deep_type_map() -> void:
-	if _deep_type_map.empty():
+	if _deep_type_map.is_empty():
 		_deep_type_map = _get_deep_type_map()
 		_build_deep_path_map()
 
@@ -799,13 +799,13 @@ static func _get_deep_type_map() -> Dictionary:
 	exts.erase("tres")
 
 	# generate 'data' map
-	while not dirs.empty():
-		var dir = Directory.new()
+	while not dirs.is_empty():
+		var dir = DirAccess.new()
 		var dir_name = dirs.back()
 		dirs.pop_back()
 
 		if dir.open(dir_name) == OK:
-			dir.list_dir_begin()
+			dir.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 			var file_name = dir.get_next()
 			while file_name:
 				if not dir_name == "res://":
@@ -849,8 +849,8 @@ static func _get_script() -> Script:
 
 
 # Utility for creating an instance of this class in a static context
-static func _new() -> Reference:
-	return (_get_script()).new() as Reference
+static func _new() -> RefCounted:
+	return (_get_script()).new() as RefCounted
 
 
 # Does this script inherit the features of the given engine class?
@@ -910,7 +910,7 @@ static func _scene_is_scene(p_scene: PackedScene, p_other: PackedScene) -> bool:
 
 
 static func _convert_name_to_res(p_name: String, p_map: Dictionary = {}) -> Resource:
-	if not p_name or ClassDB.class_exists(p_name) or p_map.empty() or not p_map.has(p_name):
+	if not p_name or ClassDB.class_exists(p_name) or p_map.is_empty() or not p_map.has(p_name):
 		return null
 	return load(p_map[p_name].path)
 

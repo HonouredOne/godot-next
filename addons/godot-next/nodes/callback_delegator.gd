@@ -1,4 +1,4 @@
-tool
+@tool
 class_name CallbackDelegator
 extends Node
 # author: xdgamestudios
@@ -83,7 +83,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	_handle_notification("_unhandled_input", event)
 
 
-func _unhandled_key_input(event: InputEventKey) -> void:
+func _unhandled_key_input(event: InputEvent) -> void:
 	_handle_notification("_unhandled_key_input", event)
 
 
@@ -154,7 +154,7 @@ func _get_property_list() -> Array:
 
 # Helper method to facilitate delegation of the callback.
 func _handle_notification(p_name: String, p_param = null) -> void:
-	if Engine.editor_hint:
+	if Engine.is_editor_hint():
 		return
 	if p_param:
 		for an_element in _callbacks[p_name]:
@@ -168,7 +168,7 @@ func _handle_notification(p_name: String, p_param = null) -> void:
 func _initialize_element(p_element: Resource) -> void:
 	_awake(p_element)
 	#warning-ignore:return_value_discarded
-	p_element.connect("script_changed", self, "_refresh_callbacks", [p_element])
+	p_element.connect("script_changed", Callable(self, "_refresh_callbacks").bind(p_element))
 	_add_to_callbacks(p_element)
 
 
@@ -191,15 +191,15 @@ func _check_for_empty_callbacks() -> void:
 	for a_callback in _callbacks:
 		match a_callback:
 			"_process":
-				set_process(not _callbacks[a_callback].empty())
+				set_process(not _callbacks[a_callback].is_empty())
 			"_physics_process":
-				set_physics_process(not _callbacks[a_callback].empty())
+				set_physics_process(not _callbacks[a_callback].is_empty())
 			"_input":
-				set_process_input(not _callbacks[a_callback].empty())
+				set_process_input(not _callbacks[a_callback].is_empty())
 			"_unhandled_input":
-				set_process_unhandled_input(not _callbacks[a_callback].empty())
+				set_process_unhandled_input(not _callbacks[a_callback].is_empty())
 			"_unhandled_key_input":
-				set_process_unhandled_key_input(not _callbacks[a_callback].empty())
+				set_process_unhandled_key_input(not _callbacks[a_callback].is_empty())
 
 
 # Sets up the owner instance on the Behavior.

@@ -157,7 +157,7 @@ func shuffle():
 		a_row.shuffle()
 
 
-func empty() -> bool:
+func is_empty() -> bool:
 	return len(data) == 0
 
 

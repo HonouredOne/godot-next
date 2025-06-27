@@ -13,32 +13,32 @@ extends VBoxContainer
 signal item_inserted(p_index, p_control)
 signal item_removed(p_index, p_control)
 
-const ICON_ADD: Texture = preload("../icons/icon_add.svg")
-const ICON_DELETE: Texture = preload("../icons/icon_import_fail.svg")
-const ICON_SLIDE: Texture = preload("../icons/icon_mirror_y.svg")
+const ICON_ADD: Texture2D = preload("../icons/icon_add.svg")
+const ICON_DELETE: Texture2D = preload("../icons/icon_import_fail.svg")
+const ICON_SLIDE: Texture2D = preload("../icons/icon_mirror_y.svg")
 
 # The title text at the top of the node.
-export var title: String = "" setget set_title
+@export var title: String = "": set = set_title
 # The script for the item. Incompatible with item_scene.
-export var item_script: Script = null setget set_item_script
+@export var item_script: Script = null: set = set_item_script
 # The scene for the item. Incompatible with item_script.
-export var item_scene: PackedScene = null setget set_item_scene
+@export var item_scene: PackedScene = null: set = set_item_scene
 # label: The prefix text before enumeration, e.g. 'Item' results in Item 1, Item 2, etc.
 #		 If empty, will generate no labels at all unless the item has '_get_label' implemented.
-export var item_prefix: String = "" setget set_item_prefix
+@export var item_prefix: String = "": set = set_item_prefix
 # label: The color of the highlighted (hovered over) label.
-export var label_tint: Color = Color(1, 1, 1, 1) setget set_label_tint
+@export var label_tint: Color = Color(1, 1, 1, 1): set = set_label_tint
 # settings: If true, users may reorder items by dragging from the slide icon. Else the slide icon is hidden.
-export var allow_reordering: bool = true setget set_allow_reordering
+@export var allow_reordering: bool = true: set = set_allow_reordering
 # settings: If true, users may double-click a label to edit its name. Else no effect.
-export var editable_labels: bool = true
+@export var editable_labels: bool = true
 # settings: If true, users may click the delete button to delete an item. Else the delete button is hidden.
-export var deletable_items: bool = true setget set_deletable_items
+@export var deletable_items: bool = true: set = set_deletable_items
 # settings: If true, indexes items with size + 1. Else indexes items with a constantly growing ID, i.e. doesn't reset due to item deletion.
-export var index_by_size: bool = false
+@export var index_by_size: bool = false
 
 var label: Label
-var add_button: ToolButton
+var add_button: Button
 var content: VBoxContainer
 
 var _dragged_item: HBoxContainer = null
@@ -64,11 +64,11 @@ func _init(p_title: String = "", p_item_prefix: String = "", p_type: Resource = 
 	label.text = p_title
 	main_toolbar.add_child(label)
 
-	add_button = ToolButton.new()
+	add_button = Button.new()
 	add_button.icon = ICON_ADD
 	add_button.name = "AddButton"
 	#warning-ignore:return_value_discarded
-	add_button.connect("pressed", self, "append_item")
+	add_button.connect("pressed", Callable(self, "append_item"))
 	main_toolbar.add_child(add_button)
 
 	content = VBoxContainer.new()
@@ -106,12 +106,12 @@ func insert_item(p_index: int) -> Control:
 
 	var hbox := HBoxContainer.new()
 	#warning-ignore:return_value_discarded
-	hbox.connect("gui_input", self, "_on_hbox_gui_input", [hbox])
+	hbox.connect("gui_input", Callable(self, "_on_hbox_gui_input").bind(hbox))
 
 	var rect := TextureRect.new()
 	rect.texture = ICON_SLIDE
 	#warning-ignore:return_value_discarded
-	rect.connect("gui_input", self, "_on_slide_gui_input", [rect])
+	rect.connect("gui_input", Callable(self, "_on_slide_gui_input").bind(rect))
 	rect.name = "ItemSlide"
 	rect.set_visible(allow_reordering)
 	hbox.add_child(rect)
@@ -124,12 +124,12 @@ func insert_item(p_index: int) -> Control:
 	item_edit.name = "ItemEdit"
 	item_edit.hide()
 	#warning-ignore:return_value_discarded
-	item_edit.connect("text_entered", self, "_on_edit_text_entered", [item_edit, item_label])
+	item_edit.connect("text_submitted", Callable(self, "_on_edit_text_entered").bind(item_edit, item_label))
 	hbox.add_child(item_edit)
 
 	hbox.add_child(node)
 
-	var del_btn := ToolButton.new()
+	var del_btn := Button.new()
 	del_btn.icon = ICON_DELETE
 	del_btn.name = "DeleteButton"
 	if not deletable_items:
@@ -144,7 +144,7 @@ func insert_item(p_index: int) -> Control:
 
 	_reset_prefix_on_label(item_label, p_index)
 	#warning-ignore:return_value_discarded
-	del_btn.connect("pressed", self, "_on_remove_item", [del_btn])
+	del_btn.connect("pressed", Callable(self, "_on_remove_item").bind(del_btn))
 	_item_inserted(p_index, node)
 
 	emit_signal("item_inserted", p_index, node)
@@ -176,21 +176,21 @@ func remove_item(p_idx: int):
 	_removals += 1
 
 
-func _on_remove_item(p_del_btn: ToolButton):
+func _on_remove_item(p_del_btn: Button):
 	remove_item(p_del_btn.get_parent().get_index())
 
 
 func _on_slide_gui_input(p_event: InputEvent, p_rect: TextureRect):
 	if p_event is InputEventMouseButton:
 		var mb := p_event as InputEventMouseButton
-		if not mb.is_echo() and mb.button_index == BUTTON_LEFT and mb.pressed:
+		if not mb.is_echo() and mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
 			_dragged_item = p_rect.get_parent() as HBoxContainer
 
 
 func _on_hbox_gui_input(p_event: InputEvent, p_hbox: HBoxContainer):
 	if p_event is InputEventMouseButton:
 		var mb := p_event as InputEventMouseButton
-		if not mb.is_echo() and mb.button_index == BUTTON_LEFT and not mb.pressed and _dragged_item:
+		if not mb.is_echo() and mb.button_index == MOUSE_BUTTON_LEFT and not mb.pressed and _dragged_item:
 			_dragged_item = null
 			print(p_hbox, ": stopped dragging")
 		if mb.doubleclick and editable_labels:
@@ -223,11 +223,11 @@ func _on_hbox_gui_input(p_event: InputEvent, p_hbox: HBoxContainer):
 				moved = true
 
 			if moved:
-				var del_btn := _dragged_item.get_node("DeleteButton") as ToolButton
-				if del_btn.is_connected("pressed", self, "remove_item"):
-					del_btn.disconnect("pressed", self, "remove_item")
+				var del_btn := _dragged_item.get_node("DeleteButton") as Button
+				if del_btn.is_connected("pressed", Callable(self, "remove_item")):
+					del_btn.disconnect("pressed", Callable(self, "remove_item"))
 				#warning-ignore:return_value_discarded
-				del_btn.connect("pressed", self, "remove_item", [prev_idx])
+				del_btn.connect("pressed", Callable(self, "remove_item").bind(prev_idx))
 
 
 func _on_edit_text_entered(p_text: String, p_edit: LineEdit, p_label: Label):
@@ -240,7 +240,7 @@ func _get_node_from_type() -> Control:
 	if item_script:
 		return item_script.new() as Control
 	elif item_scene:
-		return item_scene.instance() as Control
+		return item_scene.instantiate() as Control
 	else:
 		return null
 
@@ -283,7 +283,7 @@ func _validate_item_type(p_res: Resource) -> bool:
 	if p_res is Script:
 		node = p_res.new() as Control
 	elif p_res is PackedScene:
-		node = p_res.instance() as Control
+		node = p_res.instantiate() as Control
 	else:
 		printerr("Item Resource is unassigned.")
 		return false
@@ -337,5 +337,5 @@ func set_label_tint(p_value: Color):
 func set_deletable_items(p_value: bool):
 	deletable_items = p_value
 	for a_hbox in content.get_children():
-		var del_btn := (a_hbox as HBoxContainer).get_node("DeleteButton") as ToolButton
+		var del_btn := (a_hbox as HBoxContainer).get_node("DeleteButton") as Button
 		del_btn.visible = p_value

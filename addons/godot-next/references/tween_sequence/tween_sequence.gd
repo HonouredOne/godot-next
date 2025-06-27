@@ -1,5 +1,5 @@
 class_name TweenSequence
-extends Reference
+extends RefCounted
 # author: KoBeWi
 # license: MIT
 # description:
@@ -214,8 +214,8 @@ func _init(tree: SceneTree) -> void:
 	_tween.set_meta("sequence", self)
 	_tree.get_root().call_deferred("add_child", _tween)
 
-	_tree.connect("idle_frame", self, "start", [], CONNECT_ONESHOT)
-	_tween.connect("tween_all_completed", self, "_step_complete")
+	_tree.connect("idle_frame", Callable(self, "start").bind(), CONNECT_ONE_SHOT)
+	_tween.connect("tween_all_completed", Callable(self, "_step_complete"))
 
 # All Tweener-creating methods will return the Tweeners for further chained usage.
 
@@ -257,40 +257,40 @@ func append_method(target: Object, method: String, from_value, to_value, duratio
 
 # When used, next Tweener will be added as a parallel to previous one.
 # Example: sequence.parallel().append(...)
-func parallel() -> Reference:
-	if _tweeners.empty():
+func parallel() -> RefCounted:
+	if _tweeners.is_empty():
 		_tweeners.append([])
 	_parallel = true
 	return self
 
 
 # Alias to parallel(), except it won't work without first tweener.
-func join() -> Reference:
-	assert(!_tweeners.empty(), "Can't join with empty sequence!")
+func join() -> RefCounted:
+	assert(!_tweeners.is_empty(), "Can't join with empty sequence!")
 	_parallel = true
 	return self
 
 
 # Sets the speed scale of tweening.
-func set_speed(speed: float) -> Reference:
+func set_velocity(speed: float) -> RefCounted:
 	_tween.playback_speed = speed
 	return self
 
 
 # Sets how many the sequence should repeat.
 # When used without arguments, sequence will run infinitely.
-func set_loops(loops := -1) -> Reference:
+func set_loops(loops := -1) -> RefCounted:
 	_loops = loops
 	return self
 
 
 # Whether the sequence should autostart or not.
 # Enabled by default.
-func set_autostart(autostart: bool) -> Reference:
+func set_autostart(autostart: bool) -> RefCounted:
 	if _autostart and not autostart:
-		_tree.disconnect("idle_frame", self, "start")
+		_tree.disconnect("idle_frame", Callable(self, "start"))
 	elif not _autostart and autostart:
-		_tree.connect("idle_frame", self, "start", [], CONNECT_ONESHOT)
+		_tree.connect("idle_frame", Callable(self, "start").bind(), CONNECT_ONE_SHOT)
 
 	_autostart = autostart
 	return self
@@ -360,7 +360,7 @@ func _add_tweener(tweener: Tweener):
 
 
 func _run_next_step() -> void:
-	assert(!_tweeners.empty(), "Sequence has no steps!")
+	assert(!_tweeners.is_empty(), "Sequence has no steps!")
 	var group := _tweeners[_current_step] as Array
 	for tweener in group:
 		tweener._start(_tween)

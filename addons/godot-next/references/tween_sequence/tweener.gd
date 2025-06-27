@@ -1,5 +1,5 @@
 class_name Tweener
-extends Reference
+extends RefCounted
 # author: KoBeWi
 # license: MIT
 # description:

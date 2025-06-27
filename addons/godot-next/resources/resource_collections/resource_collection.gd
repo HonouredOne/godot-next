@@ -1,4 +1,4 @@
-tool
+@tool
 class_name ResourceCollection
 extends Resource
 # author: xdgamestudios
@@ -28,7 +28,7 @@ func set_base_type(p_type: Script) -> void:
 	if _type == p_type:
 		return
 	_type = p_type
-	property_list_changed_notify()
+	notify_property_list_changed()
 
 
 func is_type_readonly() -> bool:
@@ -39,7 +39,7 @@ func set_type_readonly(read_only: bool) -> void:
 	if _type_readonly == read_only:
 		return
 	_type_readonly = read_only
-	property_list_changed_notify()
+	notify_property_list_changed()
 
 
 func _get(p_property: String):
@@ -54,7 +54,7 @@ func _set(p_property: String, p_value) -> bool:
 		"base_type":
 			if _type != p_value:
 				_type = p_value
-				property_list_changed_notify()
+				notify_property_list_changed()
 			return true
 	return false
 
@@ -125,4 +125,4 @@ func _find_inheritors() -> Dictionary:
 func _on_dropdown_selector_selected(dropdown_selector):
 	var script = dropdown_selector.get_selected_meta()
 	_add_element(script)
-	property_list_changed_notify()
+	notify_property_list_changed()

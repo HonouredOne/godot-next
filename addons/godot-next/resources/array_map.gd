@@ -1,4 +1,4 @@
-tool
+@tool
 class_name ArrayMap
 extends Resource
 # author: willnationsdev
@@ -17,7 +17,7 @@ var values := []
 var keys := {}
 
 # To more easily identify resource data in git diffs of *.tres files.
-export var name := ""
+@export var name := ""
 
 # To accurately store type information.
 # Initially empty, but updates during first `insert` after clear.

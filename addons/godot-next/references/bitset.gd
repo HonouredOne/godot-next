@@ -1,5 +1,5 @@
 class_name Bitset
-extends Reference
+extends RefCounted
 # author: milesturin
 # license: MIT
 # description: A class that allows for easily manipulated bitmasks of any size
@@ -9,7 +9,7 @@ extends Reference
 
 const MASK_SIZE := 32
 
-var bitmasks: PoolIntArray = []
+var bitmasks: PackedInt32Array = []
 var bits: int
 
 func _init(size: int, default_state: bool = false, enforce_soft_size: bool = true) -> void:

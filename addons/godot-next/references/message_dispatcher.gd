@@ -1,5 +1,5 @@
 class_name MessageDispatcher
-extends Reference
+extends RefCounted
 # author: MunWolf (Rikhardur Bjarni Einarsson)
 # license: MIT
 # copyright: Copyright (c) 2019 Rikhardur Bjarni Einarsson
@@ -53,4 +53,4 @@ func emit_message(message_type: String, message_data: Dictionary) -> bool:
 		for handler in invalid:
 			handlers.erase(handler)
 
-	return handlers != null && !handlers.empty()
+	return handlers != null && !handlers.is_empty()

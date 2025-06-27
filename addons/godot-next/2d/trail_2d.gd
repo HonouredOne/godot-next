@@ -31,25 +31,25 @@ enum PersistWhen {
 }
 
 # The NodePath to the target.
-export var target_path: NodePath = @".." setget set_target_path
+@export var target_path: NodePath = @"..": set = set_target_path
 # If not persisting, the number of points that should be allowed in the trail.
-export var trail_length: int = 10
+@export var trail_length: int = 10
 # To what degree the trail should remain in existence before automatically removing points.
-export(int, "Off", "Always", "Conditional") var persistence: int = Persistence.OFF
+@export var persistence: int = Persistence.OFF # (int, "Off", "Always", "Conditional")
 # During conditional persistence, which persistence algorithm to use.
-export(int, "On Movement", "Custom") var persistence_condition: int = PersistWhen.ON_MOVEMENT
+@export var persistence_condition: int = PersistWhen.ON_MOVEMENT # (int, "On Movement", "Custom")
 # During conditional persistence, how many points to remove per frame.
-export var degen_rate: int = 1
+@export var degen_rate: int = 1
 # If true, automatically set z_index to be one less than the 'target'.
-export var auto_z_index: bool = true
+@export var auto_z_index: bool = true
 # If true, will automatically setup a gradient for a gradually transparent trail.
-export var auto_alpha_gradient: bool = true
+@export var auto_alpha_gradient: bool = true
 
 # The target node to track.
-var target: Node2D setget set_target
+var target: Node2D: set = set_target
 
 func _init():
-	set_as_toplevel(true)
+	set_as_top_level(true)
 	global_position = Vector2()
 	global_rotation = 0
 	if auto_alpha_gradient and not gradient:

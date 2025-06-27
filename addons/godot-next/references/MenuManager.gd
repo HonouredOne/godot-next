@@ -1,5 +1,5 @@
 class_name MenuManager
-extends Reference
+extends RefCounted
 
 # author: nonunknown
 # license: MIT

@@ -1,6 +1,6 @@
-tool
+@tool
 class_name BitFlag
-extends Reference
+extends RefCounted
 # author: xdgamestudios
 # license: MIT
 # description: A class that allows abstracts away the complexity of handling bit flag enum types.
@@ -29,7 +29,7 @@ extends Reference
 #		bf.to_pinfo_dict("property_name") # Returns a dictionary with export structure.
 
 var _enum: Dictionary = {}
-var _flags: int = 0 setget set_flags, get_flags
+var _flags: int = 0: get = get_flags, set = set_flags
 
 func _init(p_enum: Dictionary, p_to_flag: bool = false):
 	if p_to_flag:
@@ -113,7 +113,7 @@ func get_keys() -> Array:
 
 
 func to_pinfo_dict(p_name: String) -> Dictionary:
-	var hint_string = PoolStringArray(get_keys()).join(",")
+	var hint_string = ",".join(PackedStringArray(get_keys()))
 	return PropertyInfo.new(p_name, TYPE_INT, PROPERTY_HINT_FLAGS, hint_string).to_dict()
 
 

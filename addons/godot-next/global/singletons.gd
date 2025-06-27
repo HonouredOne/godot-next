@@ -1,6 +1,6 @@
-tool
+@tool
 class_name Singletons
-extends Reference
+extends RefCounted
 # author: xdgamestudios
 # license: MIT
 # description: An API for accessing singletons
@@ -37,7 +37,7 @@ static func fetchs(p_name: String) -> Object:
 
 # Returns an editor-only singleton by its class name.
 static func fetch_editor(p_class: GDScriptNativeClass) -> Object:
-	if not Engine.editor_hint:
+	if not Engine.is_editor_hint():
 		push_warning("Cannot access '%s' (editor-only class) at runtime." % p_class.get_class())
 		return null
 

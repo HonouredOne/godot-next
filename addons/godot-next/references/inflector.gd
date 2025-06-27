@@ -1,6 +1,6 @@
-tool
+@tool
 class_name Inflector
-extends Reference
+extends RefCounted
 # author: xdgamestudios (adapted from C# .NET Humanizer, licensed under MIT)
 # license: MIT
 # description: Provides inflection tools to pluralize and singularize strings.
@@ -33,7 +33,7 @@ extends Reference
 #		Note:
 #		- If the first parameter's state is unknown, use 'p_force = true' to force an unknown term into the desired state.
 
-class Rule extends Reference:
+class Rule extends RefCounted:
 	var _regex: RegEx
 	var _replacement: String
 
@@ -50,7 +50,7 @@ class Rule extends Reference:
 		return _regex.sub(p_word, _replacement)
 
 
-class Vocabulary extends Reference:
+class Vocabulary extends RefCounted:
 	var _plurals: Array = [] setget, get_plurals
 	var _singulars: Array = [] setget, get_singulars
 	var _uncountables: Array = [] setget, get_uncountables

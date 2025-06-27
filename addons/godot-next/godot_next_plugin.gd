@@ -1,4 +1,4 @@
-tool
+@tool
 extends EditorPlugin
 
 const DelegationInspectorPlugin = preload("res://addons/godot-next/inspector_plugins/delegation_inspector_plugin.gd")

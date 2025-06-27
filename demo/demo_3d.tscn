@@ -6,21 +6,21 @@
 [ext_resource path="res://demo/scripts/test_vector_display.gd" type="Script" id=4]
 
 [sub_resource type="Gradient" id=1]
-colors = PoolColorArray( 0, 0.25, 1, 1, 0, 0, 0, 1 )
+colors = PackedColorArray( 0, 0.25, 1, 1, 0, 0, 0, 1 )
 
-[sub_resource type="GradientTexture" id=2]
+[sub_resource type="GradientTexture2D" id=2]
 gradient = SubResource( 1 )
 
-[sub_resource type="SpatialMaterial" id=3]
+[sub_resource type="StandardMaterial3D" id=3]
 flags_unshaded = true
 albedo_texture = SubResource( 2 )
 
-[node name="Demo3D" type="Spatial"]
+[node name="Demo3D" type="Node3D"]
 
-[node name="WanderingNode3D" type="Spatial" parent="."]
+[node name="WanderingNode3D" type="Node3D" parent="."]
 script = ExtResource( 2 )
 
-[node name="Trail3D" type="ImmediateGeometry" parent="WanderingNode3D"]
+[node name="Trail3D" type="ImmediateMesh" parent="WanderingNode3D"]
 material_override = SubResource( 3 )
 script = ExtResource( 1 )
 length = 5.0
@@ -28,13 +28,13 @@ max_radius = 0.25
 density_lengthwise = 50
 density_around = 20
 
-[node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0, 2, 8 )
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D( 1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0, 2, 8 )
 
-[node name="TestVectorDisplay3D" type="Spatial" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0.5 )
+[node name="TestVectorDisplay3D" type="Node3D" parent="."]
+transform = Transform3D( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0.5 )
 script = ExtResource( 4 )
-pool_vector3_array = PoolVector3Array( 1, 0, 2, 2, 0, 1 )
+pool_vector3_array = PackedVector3Array( 1, 0, 2, 2, 0, 1 )
 
 [node name="VectorDisplay3D" type="Node" parent="TestVectorDisplay3D"]
 script = ExtResource( 3 )

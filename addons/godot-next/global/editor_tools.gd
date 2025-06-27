@@ -1,6 +1,6 @@
-tool
+@tool
 class_name EditorTools
-extends Reference
+extends RefCounted
 # author: willnationsdev
 # description: A utility for any features useful in the context of the Editor.
 

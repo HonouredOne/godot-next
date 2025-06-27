@@ -1,6 +1,6 @@
 using Godot;
 
-public class Trail3D : ImmediateGeometry
+public partial class Trail3D : ImmediateMesh
 {
     [Export] public float length = 10.0f;
     [Export] public float maxRadius = 0.5f;

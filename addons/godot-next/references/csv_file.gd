@@ -1,6 +1,6 @@
-tool
+@tool
 class_name CSVFile
-extends Reference
+extends RefCounted
 # author: willnationsdev
 # description: Provides utilities for loading, saving, and editing CSV files.
 # dependencies: Array2D
@@ -100,14 +100,14 @@ func save_file(p_filepath: String) -> int:
 	if err != OK:
 		return err
 	for a_row in _array.data:
-		var strings := PoolStringArray()
+		var strings := PackedStringArray()
 		for a_cell in a_row:
 			var text := str(a_cell)
 			text = text.replace(_quote, _quote + _quote)
 			if text.find(_sep) != -1:
 				text = _quote + text + _quote
 			strings.push_back(text)
-		f.store_line(strings.join(_sep))
+		f._sep.join(store_line(strings))
 	f.close()
 	emit_signal("file_saved", p_filepath)
 	return OK
@@ -158,7 +158,7 @@ func _parse_line(p_line: String) -> Array:
 	var start_collect_char := false
 	var double_quotes_in_column := false
 
-	var chars := p_line.to_utf8()
+	var chars := p_line.to_utf8_buffer()
 	for a_char in chars:
 		var s := char(a_char)
 		if in_quotes:

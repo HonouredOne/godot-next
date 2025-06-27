@@ -1,5 +1,5 @@
 class_name FileSystemLink
-extends Reference
+extends RefCounted
 # author: willnationsdev
 # description: A utility for creating links (file/directory, symbolic/hard).
 # API details:
@@ -38,8 +38,8 @@ static func mk_windows_junction(p_target: String, p_linkpath: String = "") -> in
 
 
 static func _make_link(p_target: String, p_linkpath: String = "", p_target_type = TargetTypes.FILE, p_link_type: int = LinkTypes.SOFT) -> int:
-	var params := PoolStringArray()
-	var dir := Directory.new()
+	var params := PackedStringArray()
+	var dir := DirAccess.new()
 	var output := []
 	var target := ProjectSettings.globalize_path(p_target)
 	var linkpath := ProjectSettings.globalize_path(p_linkpath)

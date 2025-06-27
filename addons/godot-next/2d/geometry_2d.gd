@@ -1,5 +1,6 @@
-tool
-class_name Geometry2D, "../icons/icon_geometry_2d.svg"
+@tool
+@icon("../icons/icon_geometry_2d.svg")
+class_name Geometry2D
 extends CollisionShape2D
 # author: Henrique "Pigdev" Campos
 # license: MIT
@@ -8,8 +9,8 @@ extends CollisionShape2D
 #	- Don't use it as direct child of CollisionBody2D classes unless you intent
 #	  to use it as its CollisionShape2D.
 
-export (Color) var color := Color.white setget set_color
-export (Vector2) var offset_position := Vector2.ZERO setget set_offset
+@export var color := Color.WHITE: set = set_color
+@export var offset_position := Vector2.ZERO: set = set_offset
 
 func _draw() -> void:
 	if shape is CircleShape2D:
@@ -30,8 +31,8 @@ func draw_capsule(capsule_position: Vector2, capsule_radius: float,
 	var lower_circle_position: Vector2 = capsule_position - Vector2(0, capsule_height * 0.5)
 	draw_circle(lower_circle_position, capsule_radius, capsule_color)
 
-	var rect_position: Vector2 = capsule_position - Vector2(capsule_radius, capsule_height * 0.5)
-	var rect := Rect2(rect_position, Vector2(capsule_radius * 2, capsule_height))
+	var position: Vector2 = capsule_position - Vector2(capsule_radius, capsule_height * 0.5)
+	var rect := Rect2(position, Vector2(capsule_radius * 2, capsule_height))
 	draw_rect(rect, capsule_color)
 
 

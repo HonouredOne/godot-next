@@ -1,6 +1,6 @@
-tool
+@tool
 class_name ProjectTools
-extends Reference
+extends RefCounted
 # author: willnationsdev
 # license: MIT
 # description: A utility for any features useful in the context of a Godot Project.

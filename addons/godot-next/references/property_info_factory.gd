@@ -1,8 +1,8 @@
-tool
+@tool
 class_name PropertyInfoFactory
-extends Reference
+extends RefCounted
 
-static func from_dict(p_dict: Dictionary) -> Reference:
+static func from_dict(p_dict: Dictionary) -> RefCounted:
 	var name: String = p_dict.name if p_dict.has("name") else ""
 	var type: int = p_dict.type if p_dict.has("type") else TYPE_NIL
 	var hint: int = p_dict.hint if p_dict.has("hint") else PROPERTY_HINT_NONE
@@ -11,23 +11,23 @@ static func from_dict(p_dict: Dictionary) -> Reference:
 	return PropertyInfo.new(name, type, hint, hint_string, usage)
 
 
-static func new_nil(p_name: String) -> Reference:
+static func new_nil(p_name: String) -> RefCounted:
 	return PropertyInfo.new(p_name, TYPE_NIL, PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR)
 
 
-static func new_group(p_name: String, p_prefix: String = "") -> Reference:
+static func new_group(p_name: String, p_prefix: String = "") -> RefCounted:
 	return PropertyInfo.new(p_name, TYPE_NIL, PROPERTY_HINT_NONE, p_prefix, PROPERTY_USAGE_GROUP)
 
 
-static func new_array(p_name: String, p_hint: int = PROPERTY_HINT_NONE, p_hint_string: String = "", p_usage: int = PROPERTY_USAGE_DEFAULT) -> Reference:
+static func new_array(p_name: String, p_hint: int = PROPERTY_HINT_NONE, p_hint_string: String = "", p_usage: int = PROPERTY_USAGE_DEFAULT) -> RefCounted:
 	return PropertyInfo.new(p_name, TYPE_ARRAY, p_hint, p_hint_string, p_usage)
 
 
-static func new_dictionary(p_name: String, p_hint: int = PROPERTY_HINT_NONE, p_hint_string: String = "", p_usage: int = PROPERTY_USAGE_DEFAULT) -> Reference:
+static func new_dictionary(p_name: String, p_hint: int = PROPERTY_HINT_NONE, p_hint_string: String = "", p_usage: int = PROPERTY_USAGE_DEFAULT) -> RefCounted:
 	return PropertyInfo.new(p_name, TYPE_DICTIONARY, p_hint, p_hint_string, p_usage)
 
 
-static func new_resource(p_name: String, p_hint_string: String = "", p_usage: int = PROPERTY_USAGE_DEFAULT) -> Reference:
+static func new_resource(p_name: String, p_hint_string: String = "", p_usage: int = PROPERTY_USAGE_DEFAULT) -> RefCounted:
 	return PropertyInfo.new(p_name, TYPE_OBJECT, PROPERTY_HINT_RESOURCE_TYPE, p_hint_string, p_usage)
 
 

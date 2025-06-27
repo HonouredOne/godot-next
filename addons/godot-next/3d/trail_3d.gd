@@ -1,5 +1,5 @@
 class_name Trail3D, "../icons/icon_trail_3d.svg"
-extends ImmediateGeometry
+extends ImmediateMesh
 # author: miziziziz
 # brief description: Creates a variable-length trail on an ImmediateGeometry node.
 # API details:
@@ -7,11 +7,11 @@ extends ImmediateGeometry
 #	- density_around: number of vertexes in each loop
 #	- shape: curve used to shape trail, right click on this in inspector to see curve options
 
-export(float) var length = 10.0
-export var max_radius = 0.5
-export(int) var density_lengthwise = 25
-export(int) var density_around = 5
-export(float, EASE) var shape
+@export var length: float = 10.0
+@export var max_radius = 0.5
+@export var density_lengthwise: int = 25
+@export var density_around: int = 5
+@export var shape # (float, EASE)
 
 var points = []
 var segment_length = 1.0

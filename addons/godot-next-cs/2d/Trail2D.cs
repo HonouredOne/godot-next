@@ -1,6 +1,6 @@
 using Godot;
 
-public class Trail2D : Line2D
+public partial class Trail2D : Line2D
 {
     public enum Persistence
     {
@@ -35,7 +35,7 @@ public class Trail2D : Line2D
 
     public override void _EnterTree()
     {
-        SetAsToplevel(true);
+        SetAsTopLevel(true);
         GlobalPosition = Vector2.Zero;
         GlobalRotation = 0;
         if (autoAlphaGradient && Gradient == null)

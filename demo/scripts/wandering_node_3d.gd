@@ -1,7 +1,7 @@
-extends Spatial
+extends Node3D
 
 var velocity = Vector3()
-onready var center = transform.origin
+@onready var center = transform.origin
 
 func _ready():
 	randomize()
@@ -12,4 +12,4 @@ func _physics_process(_delta):
 	if velocity.length_squared() > 1:
 		velocity *= 0.99
 	transform.origin += velocity
-	transform.origin = transform.origin.linear_interpolate(center, 0.125)
+	transform.origin = transform.origin.lerp(center, 0.125)
