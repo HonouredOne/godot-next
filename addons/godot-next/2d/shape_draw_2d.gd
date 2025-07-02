@@ -1,15 +1,18 @@
 @tool
-@icon("../icons/icon_geometry_2d.svg")
-class_name Geometry2D
+@icon("../icons/icon_shape_draw_2d.svg")
+class_name ShapeDraw2D
 extends CollisionShape2D
 # author: Henrique "Pigdev" Campos
 # license: MIT
-# description: Draws a Shape2D using CollisionShape2D's editor plugin handles.
-# notes:
-#	- Don't use it as direct child of CollisionBody2D classes unless you intent
-#	  to use it as its CollisionShape2D.
+## Draws a simple two-dimensional shape using CollisionShape2D's editor plugin
+## handles.
+##
+##[b]Note:[/b] Don't use it as a direct child of CollisionBody2D classes unless
+## you intend to use it as its CollisionShape2D.
 
+## Color of the shape.
 @export var color := Color.WHITE: set = set_color
+## Offset position from the node's origin.
 @export var offset_position := Vector2.ZERO: set = set_offset
 
 func _draw() -> void:
@@ -21,7 +24,9 @@ func _draw() -> void:
 	elif shape is CapsuleShape2D:
 		draw_capsule(offset_position, shape.radius, shape.height, color)
 
-
+## Draws a capsule shape.
+## [b]Note:[/b] This was added because there is no draw_capsule function in the
+## [CanvasItem] class.
 func draw_capsule(capsule_position: Vector2, capsule_radius: float,
 		capsule_height: float, capsule_color: Color) -> void:
 
@@ -35,12 +40,10 @@ func draw_capsule(capsule_position: Vector2, capsule_radius: float,
 	var rect := Rect2(position, Vector2(capsule_radius * 2, capsule_height))
 	draw_rect(rect, capsule_color)
 
-
 func set_color(new_color: Color) -> void:
 	color = new_color
-	update()
-
+	queue_redraw()
 
 func set_offset(offset: Vector2) -> void:
 	offset_position = offset
-	update()
+	queue_redraw()
