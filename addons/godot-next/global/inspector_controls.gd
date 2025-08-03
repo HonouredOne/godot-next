@@ -28,8 +28,8 @@ class DropdownAppender extends HBoxContainer:
 		return get_dropdown().get_selected_metadata()
 
 
-# Instantiates a Label. If align is not set the dafault ALIGN_LEFT will be used.
-static func new_label(p_label: String, p_align: int = Label.ALIGN_LEFT) -> Label:
+# Instantiates a Label. If align is not set the dafault HORIZONTAL_ALIGNMENT_LEFT will be used.
+static func new_label(p_label: String, p_align: int = HORIZONTAL_ALIGNMENT_LEFT) -> Label:
 	var label = Label.new()
 	label.text = p_label
 	label.align = p_align

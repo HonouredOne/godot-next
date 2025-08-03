@@ -39,13 +39,13 @@ func _init(p_enum: Dictionary, p_to_flag: bool = false):
 		_enum = p_enum
 
 
-func _get(p_property: String) -> int:
+func _get(p_property: StringName) -> int:
 	if _enum.has(p_property):
 		return _enum[p_property]
 	return 0
 
 
-func _set(p_property: String, p_value: bool) -> bool:
+func _set(p_property: StringName, p_value: Variant) -> bool:
 	if _enum.has(p_property):
 		if p_value:
 			_flags |= _enum[p_property]

@@ -36,7 +36,7 @@ static func fetchs(p_name: String) -> Object:
 
 
 # Returns an editor-only singleton by its class name.
-static func fetch_editor(p_class: GDScriptNativeClass) -> Object:
+static func fetch_editor(p_class: Variant) -> Object:
 	if not Engine.is_editor_hint():
 		push_warning("Cannot access '%s' (editor-only class) at runtime." % p_class.get_class())
 		return null

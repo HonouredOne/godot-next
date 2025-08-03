@@ -1,9 +1,13 @@
 @tool
 class_name VectorDisplay3D
 extends Node
-# Displays Vector3 members in the editor via Position3D nodes.
+## Displays [Vector3] members in the editor via [Marker3D] nodes.
 
+## Used to select the variable to display.
 @export var variable_name: String = ""
+## If true, the location of the [Marker3D] shown is relative to the parent
+## [Node].[br]
+## If false, the location is relative to the global origin.
 @export var relative: bool = true
 
 var _old_variable_name = null

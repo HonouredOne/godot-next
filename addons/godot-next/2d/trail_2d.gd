@@ -1,52 +1,80 @@
-class_name Trail2D, "../icons/icon_trail_2d.svg"
+@icon("../icons/icon_trail_2d.svg")
+class_name Trail2D
 extends Line2D
 # author: willnationsdev
-# brief description: Creates a variable-length trail that tracks the "target" node.
-# API details:
-#	- Use CanvasItem.show_behind_parent or Node2D.z_index (Inspector) to control its layer visibility
-#	- 'target' and 'target_path' (the 'target vars') will update each other as they are modified
-#	- If you assign an empty 'target var', the value will automatically update to grab the parent.
-#		- To completely turn off the Trail2D, set its `trail_length` to 0
-#	- The node will automatically update its target vars when it is moved around in the tree
-#	- You can set the "persistence" mode to have it...
-#		- vanish the trail over time (Off)
-#		- persist the trail forever, unless modified directly (Always)
-#		- persist conditionally:
-#			- persist automatically during movement and then shrink over time when you stop
-#			- persist according to your own custom logic:
-#				- use `bool _should_grow()` to return under what conditions
-#				  a point should be added underneath the target.
-#				- use `bool _should_shrink()` to return under what conditions
-#				  the degen_rate should be removed from the trail's list of points.
+## Creates a variable-length trail that tracks a [member target] node.
+##
+## - Use [member CanvasItem.show_behind_parent] or [member CanvasItem.z_index]
+## (both can be modified in the Inspector) to control its layer visibility.[br]
+## - [member target] and [member target_path] will update each other as they
+## are modified via their getters and setters.[br]
 
-enum Persistence {
-	OFF,         # Do not persist. Remove all points after the trail_length.
-	ALWAYS,      # Always persist. Do not remove any points.
-	CONDITIONAL, # Sometimes persist. Choose an algorithm for when to add and remove points.
+## Used to determine how long the trail points should be rendered.
+enum PersistenceMode {
+	## Do not persist. Removes all points beyond the trail_length.
+	OFF,
+	## Always persist. Does not remove any points.
+	ALWAYS,
+	## Conditionally persist. Choose an algorithm from
+	## [enum PersistenceCondition] for when to add and remove points.
+	CONDITIONAL,
 }
 
-enum PersistWhen {
-	ON_MOVEMENT, # Add points during movement and remove points when not moving.
-	CUSTOM,      # Override _should_grow() and _should_shrink() to define when to add/remove points.
+## Used when [member persistence_mode] is set to
+## [constant PersistenceMode.CONDITIONAL].
+enum PersistenceCondition {
+	## Add points during movement and remove points when not moving.
+	ON_MOVEMENT,
+	## Override [method _should_grow] and [method _should_shrink] to define your
+	## own custom logic for when to add/remove points.
+	CUSTOM,
 }
 
-# The NodePath to the target.
-@export var target_path: NodePath = @"..": set = set_target_path
-# If not persisting, the number of points that should be allowed in the trail.
-@export var trail_length: int = 10
-# To what degree the trail should remain in existence before automatically removing points.
-@export var persistence: int = Persistence.OFF # (int, "Off", "Always", "Conditional")
-# During conditional persistence, which persistence algorithm to use.
-@export var persistence_condition: int = PersistWhen.ON_MOVEMENT # (int, "On Movement", "Custom")
-# During conditional persistence, how many points to remove per frame.
+var _target: Node2D = null
+var _target_path: NodePath = ^".."
+
+## The NodePath to the target. If you do not assign a [member target], it will
+## default to the parent node. This means that the node will automatically
+## update its target when it is moved around in the scene tree.
+@export var target_path: NodePath = ^"..":
+	set(p_value):
+		_target_path = p_value
+		_target = get_node(p_value) as Node2D if has_node(p_value) else null
+	get:
+		return _target_path
+## If the [enum Persistence] value is set to [constant OFF], this is the number
+## of points that should be allowed in the trail.[br]
+## [b]Note:[/b] To completely turn off the Trail2D, set this to 0.
+@export var trail_length: int = 50
+## To what degree the trail should remain in existence before automatically
+## removing points.
+@export var persistence_mode: PersistenceMode = 0
+## If [member persistence_mode] is set to
+## [constant PersistenceMode.CONDITIONAL], which persistence algorithm to use.
+@export var persistence_condition: PersistenceCondition = 0
+## If [member persistence_mode] is set to
+## [constant PersistenceMode.CONDITIONAL], how many points to remove per frame.
 @export var degen_rate: int = 1
-# If true, automatically set z_index to be one less than the 'target'.
+## If [code]true[/code], will automatically set [member CanvasItem.z_index] to
+## be one less than the [member target].
 @export var auto_z_index: bool = true
-# If true, will automatically setup a gradient for a gradually transparent trail.
+## If [code]true[/code], will automatically setup a gradient for a gradually
+## transparent trail.
 @export var auto_alpha_gradient: bool = true
 
-# The target node to track.
-var target: Node2D: set = set_target
+## The target node to track.
+var target: Node2D:
+	set(p_value):
+		_target = p_value
+		if p_value:
+			var path = get_path_to(p_value)
+			if path != target_path:
+				_target_path = path
+		else:
+			_target_path = ^""
+	get:
+		return _target
+
 
 func _init():
 	set_as_top_level(true)
@@ -67,61 +95,61 @@ func _notification(p_what: int):
 			if auto_z_index:
 				z_index = target.z_index - 1 if target else 0
 		NOTIFICATION_UNPARENTED:
-			self.target_path = @""
+			self.target_path = ^""
 			self.trail_length = 0
 
 
-func _process(_delta: float):
+func _process(_delta: float) -> void:
 	if target:
-		match persistence:
-			Persistence.OFF:
+		match persistence_mode:
+			PersistenceMode.OFF:
 				add_point(target.global_position)
 				while get_point_count() > trail_length:
 					remove_point(0)
-			Persistence.ALWAYS:
+			PersistenceMode.ALWAYS:
 				add_point(target.global_position)
-				pass
-			Persistence.CONDITIONAL:
+			PersistenceMode.CONDITIONAL:
 				match persistence_condition:
-					PersistWhen.ON_MOVEMENT:
-						var moved: bool = get_point_position(get_point_count()-1) != target.global_position if get_point_count() else false
-						if not get_point_count() or moved:
-							add_point(target.global_position)
-						else:
-							#warning-ignore:unused_variable
-							for i in range(degen_rate):
-								remove_point(0)
-					PersistWhen.CUSTOM:
-						if _should_grow():
-							add_point(target.global_position)
-						if _should_shrink():
-							#warning-ignore:unused_variable
-							for i in range(degen_rate):
-								remove_point(0)
+					PersistenceCondition.ON_MOVEMENT:
+						_conditional_persistence_on_movement()
+					PersistenceCondition.CUSTOM:
+						_conditional_persistence_custom()
 
 
+## Removes all points from the trail.
 func erase_trail():
-	#warning-ignore:unused_variable
 	for i in range(get_point_count()):
 		remove_point(0)
 
 
-func set_target(p_value: Node2D):
-	if p_value:
-		if get_path_to(p_value) != target_path:
-			set_target_path(get_path_to(p_value))
-	else:
-		target_path = @""
-
-
-func set_target_path(p_value: NodePath):
-	target_path = p_value
-	target = get_node(p_value) as Node2D if has_node(p_value) else null
-
-
+## Override this to define what conditions should cause a point to be added to
+## the list of points under the target.
 func _should_grow() -> bool:
 	return true
 
 
+## Override this to define what conditions should cause the [member degen_rate]
+## to be removed from the trail's list of points on each frame.
 func _should_shrink() -> bool:
 	return true
+
+
+func _conditional_persistence_on_movement() -> void:
+	var moved: bool = (
+			get_point_position(
+					get_point_count() - 1
+			) != target.global_position if get_point_count() else false
+	)
+	if not get_point_count() or moved:
+		add_point(target.global_position)
+	else:
+		for i in range(degen_rate):
+			remove_point(0)
+
+
+func _conditional_persistence_custom() -> void:
+	if _should_grow():
+		add_point(target.global_position)
+	if _should_shrink():
+		for i in range(degen_rate):
+			remove_point(0)

@@ -26,7 +26,7 @@ func get_data() -> Array:
 	return _data
 
 
-func _get(p_property: String):
+func _get(p_property: StringName):
 	if p_property.begins_with(DATA_PREFIX):
 		var index := int(p_property.trim_prefix(DATA_PREFIX + "item_"))
 		return _data[index] if index < _data.size() else null
@@ -37,7 +37,7 @@ func _set(p_property, p_value):
 	if p_property.begins_with(DATA_PREFIX):
 		var index := int(p_property.trim_prefix(DATA_PREFIX + "item_"))
 		if not p_value:
-			_data.remove(index)
+			_data.remove_at(index)
 			notify_property_list_changed()
 		else:
 			var res = _instantiate_script(p_value) if p_value is Script else p_value

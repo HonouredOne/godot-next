@@ -1,4 +1,5 @@
-class_name Cycle, "../icons/icon_cycle.svg"
+@icon("../icons/icon_cycle.svg")
+class_name Cycle
 extends TabContainer
 # author: willnationsdev
 # description: Cycles through child nodes without any visibility or container effects.
@@ -14,7 +15,7 @@ func _ready():
 			(a_child as Control).set_as_top_level(true)
 
 
-func add_child(p_value: Node, p_legible_unique_name: bool = false):
+func add_child(p_value: Node, p_legible_unique_name: bool = false, InternalMode = 0):
 	super.add_child(p_value, p_legible_unique_name)
 	if p_value and p_value is Control:
 		(p_value as Control).set_as_top_level(true)

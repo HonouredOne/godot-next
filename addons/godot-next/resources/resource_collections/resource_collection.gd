@@ -42,14 +42,14 @@ func set_type_readonly(read_only: bool) -> void:
 	notify_property_list_changed()
 
 
-func _get(p_property: String):
+func _get(p_property: StringName):
 	match p_property.trim_prefix(SETUP_PREFIX):
 		"base_type":
 			return _type
 	return null
 
 
-func _set(p_property: String, p_value) -> bool:
+func _set(p_property: StringName, p_value) -> bool:
 	match p_property.trim_prefix(SETUP_PREFIX):
 		"base_type":
 			if _type != p_value:

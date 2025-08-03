@@ -48,10 +48,10 @@ func flip_bit(index: int) -> void:
 	set_bit(index, !check_bit(index))
 
 
-func print_bits(multiline: bool = true) -> void:
+func print_bits(multiline: bool = false) -> void:
 	if multiline:
 		for i in range(bits):
-			print("bit " + String(i) + ": " + String(check_bit(i)))
+			print("bit " + str(i) + ": " + str(check_bit(i)))
 	else:
 		var output := ""
 		for i in range(bits):

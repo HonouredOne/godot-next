@@ -1,4 +1,5 @@
-class_name VBoxItemList, "../icons/icon_v_box_item_list.svg"
+@icon("../icons/icon_v_box_item_list.svg")
+class_name VBoxItemList
 extends VBoxContainer
 # author: willnationsdev
 # description: Creates a vertical list of items that can be added or removed. Items are a user-specified Script or Scene Control.

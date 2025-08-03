@@ -39,10 +39,10 @@ static func mk_windows_junction(p_target: String, p_linkpath: String = "") -> in
 
 static func _make_link(p_target: String, p_linkpath: String = "", p_target_type = TargetTypes.FILE, p_link_type: int = LinkTypes.SOFT) -> int:
 	var params := PackedStringArray()
-	var dir := DirAccess.new()
 	var output := []
 	var target := ProjectSettings.globalize_path(p_target)
 	var linkpath := ProjectSettings.globalize_path(p_linkpath)
+	var dir := DirAccess.open(target)
 	match p_target_type:
 		TargetTypes.FILE:
 			if not dir.file_exists(target):
@@ -76,7 +76,7 @@ static func _make_link(p_target: String, p_linkpath: String = "", p_target_type 
 			params.append(linkpath)
 			params.append(target)
 			#warning-ignore:return_value_discarded
-			OS.execute("mklink", params, true, output)
+			OS.execute("mklink", params, output)
 			return OK
 		"X11", "OSX", "LinuxBSD":
 			match p_link_type:
@@ -103,7 +103,7 @@ static func _make_link(p_target: String, p_linkpath: String = "", p_target_type 
 			params.append(target)
 			params.append(linkpath)
 			#warning-ignore:return_value_discarded
-			OS.execute("ln", params, true, output)
+			OS.execute("ln", params, output)
 			return OK
 		_:
 			return ERR_UNAVAILABLE

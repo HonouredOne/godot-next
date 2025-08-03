@@ -51,9 +51,9 @@ class Rule extends RefCounted:
 
 
 class Vocabulary extends RefCounted:
-	var _plurals: Array = [] setget, get_plurals
-	var _singulars: Array = [] setget, get_singulars
-	var _uncountables: Array = [] setget, get_uncountables
+	var _plurals: Array = []: get = get_plurals
+	var _singulars: Array = []: get = get_singulars
+	var _uncountables: Array = []: get = get_uncountables
 
 
 	func get_plurals() -> Array:
@@ -224,7 +224,7 @@ class Vocabulary extends RefCounted:
 		return vocabulary
 
 
-var _vocabulary: Vocabulary setget, get_vocabulary
+var _vocabulary: Vocabulary: get = get_vocabulary
 
 func _init(p_vocabulary = null) -> void:
 	if not p_vocabulary:

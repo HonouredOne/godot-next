@@ -1,6 +1,6 @@
 @tool
 class_name ClassType
-extends RefCounted
+extends Resource
 # author: willnationsdev
 # license: MIT
 # description:
@@ -95,7 +95,7 @@ func _init(p_input = null, p_generate_deep_map: bool = true, p_duplicate_maps: b
 		_fetch_deep_type_map()
 	match typeof(p_input):
 		TYPE_OBJECT:
-			if p_input is (get_script() as Script):
+			if p_input is Script:
 				self.name = p_input.name
 				if p_duplicate_maps:
 					_script_map = p_input._script_map.duplicate()
@@ -800,21 +800,21 @@ static func _get_deep_type_map() -> Dictionary:
 
 	# generate 'data' map
 	while not dirs.is_empty():
-		var dir = DirAccess.new()
+		var dir = DirAccess.open(dirs)
 		var dir_name = dirs.back()
 		dirs.pop_back()
 
-		if dir.open(dir_name) == OK:
+		if dir:
 			dir.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 			var file_name = dir.get_next()
-			while file_name:
+			while file_name != "":
 				if not dir_name == "res://":
 					first = false
 				# Ignore hidden content
 				if not file_name.begins_with("."):
 					# If a directory, then add to list of directories to visit
 					if dir.current_is_dir():
-						dirs.push_back(dir.get_current_dir().plus_file(file_name))
+						dirs.push_back(dir.get_current_dir().path_join(file_name))
 					# If a file, check if we already have a record for the same name.
 					# Only use files with extensions
 					elif not data.has(file_name) and exts.has(file_name.get_extension()):

@@ -123,7 +123,7 @@ func clear() -> void:
 func update() -> void:
 	# Have to be called manually if operating in UpdateMode.MANUAL
 	_update_debug_info()
-	super.update()
+	super.queue_redraw()
 
 
 func _update_debug_info() -> void:

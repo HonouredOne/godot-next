@@ -1,9 +1,13 @@
 @tool
 class_name VectorDisplay2D
 extends Node
-# Displays Vector2 members in the editor via Position2D nodes.
+## Displays [Vector2] members in the editor via [Marker2D] nodes.
 
+## Used to select the variable to display.
 @export var variable_name: String = ""
+## If true, the location of the [Marker2D] shown is relative to the parent
+## [Node].[br]
+## If false, the location is relative to the global origin.
 @export var relative: bool = true
 
 var _old_variable_name = null

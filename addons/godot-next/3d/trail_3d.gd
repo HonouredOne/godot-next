@@ -1,22 +1,39 @@
-class_name Trail3D, "../icons/icon_trail_3d.svg"
-extends ImmediateMesh
-# author: miziziziz
-# brief description: Creates a variable-length trail on an ImmediateGeometry node.
-# API details:
-#	- density_lengthwise: number of vertex loops in trail
-#	- density_around: number of vertexes in each loop
-#	- shape: curve used to shape trail, right click on this in inspector to see curve options
+@icon("../icons/icon_trail_3d.svg")
+class_name Trail3D
+extends MeshInstance3D
+# Author: miziziziz
+## Creates a variable-length trail on a [MeshInstance3D] Node using an
+## [ImmediateMesh] Resource.
 
-@export var length: float = 10.0
-@export var max_radius = 0.5
-@export var density_lengthwise: int = 25
+## An array of the points in the trail. Normally, it is unnecessary to do
+## anything with this because the [method update_trail] method already does
+## everything automatically.
+var _points = []
+
+## The size of each segment. Normally, it is unnecessary to change this because
+## it is already calculated automatically
+## (e.g. [member length] / [member density_lengthwise]).
+var _segment_length = 1.0
+
+## The number of vertices in each loop.
 @export var density_around: int = 5
-@export var shape # (float, EASE)
 
-var points = []
-var segment_length = 1.0
+## The number of vertex loops in the trail.
+@export var density_lengthwise: int = 25
+
+## The length of the trail.
+@export var length: float = 10.0
+
+## The maximum radius of a loop.
+@export var max_radius = 0.5
+
+## The curve used to shape the trail. Right click on this option in the
+## inspector to see different pre-set curve options.
+@export_exp_easing() var shape: float = 1.0
+
 
 func _ready():
+	mesh = ImmediateMesh.new()
 	if length <= 0:
 		length = 2
 	if density_around < 3:
@@ -24,9 +41,9 @@ func _ready():
 	if density_lengthwise < 2:
 		density_lengthwise = 2
 
-	segment_length = length / density_lengthwise
+	_segment_length = length / density_lengthwise
 	for i in range(density_lengthwise):
-		points.append(global_transform.origin)
+		_points.append(global_position)
 
 
 func _process(_delta):
@@ -34,28 +51,29 @@ func _process(_delta):
 	render_trail()
 
 
+## Updates the trail.
 func update_trail():
 	var ind = 0
-	var last_p = global_transform.origin
-	for p in points:
+	var last_p = global_position
+	for p in _points:
 		var dis = p.distance_to(last_p)
-		var seg_len = segment_length
+		var seg_len = _segment_length
 		if ind == 0:
 			seg_len = 0.05
 		if dis > seg_len:
 			p = last_p + (p - last_p) / dis * seg_len
 		last_p = p
-		points[ind] = p
+		_points[ind] = p
 		ind += 1
 
 
+## Renders the trail.
 func render_trail():
-	clear()
-	begin(Mesh.PRIMITIVE_TRIANGLES)
-	#begin(Mesh.PRIMITIVE_LINE_STRIP)
+	mesh.clear_surfaces()
+	mesh.surface_begin(Mesh.PRIMITIVE_TRIANGLES)
 	var local_points = []
-	for p in points:
-		local_points.append(p - global_transform.origin)
+	for p in _points:
+		local_points.append(p - global_position)
 	var last_p = Vector3()
 	var verts = []
 	var ind = 0
@@ -101,31 +119,31 @@ func render_trail():
 		for i in range(density_around):
 			var nxt_i = (i + 1) % density_around
 			# Order added affects normal.
-			set_uv(Vector2(uv, 0.0))
-			add_vertex(cur[i])
-			add_vertex(cur[nxt_i])
-			set_uv(Vector2(uvnxt, 0.0))
-			add_vertex(nxt[i])
-			set_uv(Vector2(uv, 0.0))
-			add_vertex(cur[nxt_i])
-			set_uv(Vector2(uvnxt, 0.0))
-			add_vertex(nxt[nxt_i])
-			add_vertex(nxt[i])
+			mesh.surface_set_uv(Vector2(uv, 0.0))
+			mesh.surface_add_vertex(cur[i])
+			mesh.surface_add_vertex(cur[nxt_i])
+			mesh.surface_set_uv(Vector2(uvnxt, 0.0))
+			mesh.surface_add_vertex(nxt[i])
+			mesh.surface_set_uv(Vector2(uv, 0.0))
+			mesh.surface_add_vertex(cur[nxt_i])
+			mesh.surface_set_uv(Vector2(uvnxt, 0.0))
+			mesh.surface_add_vertex(nxt[nxt_i])
+			mesh.surface_add_vertex(nxt[i])
 
 	if verts.size() > 1:
 		# Cap off top.
 		for i in range(density_around):
 			var nxt = (i + 1) % density_around
-			set_uv(Vector2(0, 0))
-			add_vertex(verts[0][i])
-			add_vertex(Vector3())
-			add_vertex(verts[0][nxt])
+			mesh.surface_set_uv(Vector2(0, 0))
+			mesh.surface_add_vertex(verts[0][i])
+			mesh.surface_add_vertex(Vector3())
+			mesh.surface_add_vertex(verts[0][nxt])
 
 		# Cap off bottom.
 		for i in range(density_around):
 			var nxt = (i + 1) % density_around
-			set_uv(Vector2(1, 0))
-			add_vertex(verts[verts.size() - 1][i])
-			add_vertex(verts[verts.size() - 1][nxt])
-			add_vertex(last_p)
-	end()
+			mesh.surface_set_uv(Vector2(1, 0))
+			mesh.surface_add_vertex(verts[verts.size() - 1][i])
+			mesh.surface_add_vertex(verts[verts.size() - 1][nxt])
+			mesh.surface_add_vertex(last_p)
+	mesh.surface_end()

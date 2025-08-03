@@ -26,14 +26,14 @@ func get_data() -> Dictionary:
 	return _data
 
 
-func _get(p_property: String):
+func _get(p_property: StringName):
 	if p_property.begins_with(DATA_PREFIX):
 		var key = p_property.trim_prefix(DATA_PREFIX)
 		return _data.get(key, null)
 	return null
 
 
-func _set(p_property: String, p_value) -> bool:
+func _set(p_property: StringName, p_value) -> bool:
 	if p_property.begins_with(DATA_PREFIX):
 		var key = p_property.trim_prefix(DATA_PREFIX)
 		if not p_value:

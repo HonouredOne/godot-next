@@ -63,10 +63,9 @@ func _get_key(p_row: Array) -> String:
 
 
 func load_file(p_filepath: String) -> int:
-	var f = File.new()
-	var err = f.open(p_filepath, File.READ)
-	if err != OK:
-		return err
+	var f = FileAccess.open(p_filepath, FileAccess.READ)
+	if f != OK:
+		return f
 	_headers.clear()
 	_map.clear()
 	_array.clear()
@@ -95,10 +94,9 @@ func load_file(p_filepath: String) -> int:
 
 
 func save_file(p_filepath: String) -> int:
-	var f := File.new()
-	var err := f.open(p_filepath, File.WRITE)
-	if err != OK:
-		return err
+	var f = FileAccess.open(p_filepath, FileAccess.WRITE)
+	if f != OK:
+		return f
 	for a_row in _array.data:
 		var strings := PackedStringArray()
 		for a_cell in a_row:
@@ -107,7 +105,7 @@ func save_file(p_filepath: String) -> int:
 			if text.find(_sep) != -1:
 				text = _quote + text + _quote
 			strings.push_back(text)
-		f._sep.join(store_line(strings))
+		f.store_line(_sep.join(strings))
 	f.close()
 	emit_signal("file_saved", p_filepath)
 	return OK

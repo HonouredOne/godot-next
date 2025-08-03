@@ -2,9 +2,18 @@ extends Node2D
 
 var velocity = Vector2()
 @onready var center = position
+var hello = FileSearch.search_string("hello")
+var array2d: Array2D = Array2D.new(0, 0, &"float")
 
 func _ready():
 	randomize()
+	if hello:
+		print(hello)
+	else:
+		print("goodbye")
+	array2d.resize(3, 3)
+	array2d.set_cell(2, 2, "hello")
+	print(array2d.get_cell(2, 2))
 
 
 func _physics_process(_delta):

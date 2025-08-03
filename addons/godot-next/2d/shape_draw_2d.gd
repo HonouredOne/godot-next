@@ -11,9 +11,15 @@ extends CollisionShape2D
 ## you intend to use it as its CollisionShape2D.
 
 ## Color of the shape.
-@export var color := Color.WHITE: set = set_color
+@export var color: Color = Color.WHITE:
+	set(new_color):
+		color = new_color
+		queue_redraw()
 ## Offset position from the node's origin.
-@export var offset_position := Vector2.ZERO: set = set_offset
+@export var offset_position: Vector2 = Vector2.ZERO:
+	set(offset):
+		offset_position = offset
+		queue_redraw()
 
 func _draw() -> void:
 	if shape is CircleShape2D:
@@ -23,6 +29,7 @@ func _draw() -> void:
 		draw_rect(rect, color)
 	elif shape is CapsuleShape2D:
 		draw_capsule(offset_position, shape.radius, shape.height, color)
+
 
 ## Draws a capsule shape.
 ## [b]Note:[/b] This was added because there is no draw_capsule function in the
@@ -39,11 +46,3 @@ func draw_capsule(capsule_position: Vector2, capsule_radius: float,
 	var position: Vector2 = capsule_position - Vector2(capsule_radius, capsule_height * 0.5)
 	var rect := Rect2(position, Vector2(capsule_radius * 2, capsule_height))
 	draw_rect(rect, capsule_color)
-
-func set_color(new_color: Color) -> void:
-	color = new_color
-	queue_redraw()
-
-func set_offset(offset: Vector2) -> void:
-	offset_position = offset
-	queue_redraw()
