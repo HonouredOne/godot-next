@@ -27,3 +27,5 @@ data_*/
 .directory
 *~
 /hello
+/addons/_Godot-IDE_
+/.godot_ide

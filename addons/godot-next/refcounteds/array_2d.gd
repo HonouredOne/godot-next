@@ -1,6 +1,7 @@
+# Author: willnationsdev
+# Edited by: HonouredOne
 class_name Array2D
 extends RefCounted
-# Author: willnationsdev
 ## A 2D Array.
 ##
 ## Creates a 2-dimensional [Array] (also known as a matrix), much like those

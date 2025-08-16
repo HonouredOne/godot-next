@@ -24,7 +24,15 @@ window/stretch/aspect="expand"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/godot-next/plugin.cfg", "res://addons/gut/plugin.cfg", "res://addons/script-ide/plugin.cfg")
+enabled=PackedStringArray("res://addons/_Godot-IDE_/plugin.cfg", "res://addons/godot-next/plugin.cfg", "res://addons/gut/plugin.cfg")
+
+[file_customization]
+
+folder_colors={
+"res://addons/_Godot-IDE_/plugins": "blue",
+"res://addons/_Godot-IDE_/plugins/": "blue",
+"res://addons/_Godot-IDE_/shared_resources/": "teal"
+}
 
 [rendering]
 

@@ -1,8 +1,8 @@
 res://default_env.tres
 res://demo/demo_2d.tscn
 res://addons/godot-next/data/singleton_cache.tres
+res://addons/_Godot-IDE_/IDE.gd
+res://addons/gut/test.gd
+res://test/unit/test_example.gd
 res://demo/demo.tscn
 res://demo/demo_3d.tscn
-res://addons/godot-next/refcounteds/bitset.gd
-res://demo/scripts/demo.gd
-res://addons/godot-next/2d/trail_2d.gd
