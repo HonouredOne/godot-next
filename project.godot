@@ -14,7 +14,7 @@ config/name="Godot Node Extensions"
 config/description="Godot Node Extensions, AKA Godot NExt.
 Contains many script classes that extend Godot with new functionality."
 run/main_scene="res://demo/demo.tscn"
-config/features=PackedStringArray("4.4")
+config/features=PackedStringArray("4.5")
 config/icon="res://icon.png"
 
 [display]

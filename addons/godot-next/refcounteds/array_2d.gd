@@ -30,9 +30,12 @@ extends RefCounted
 ## [br][br]
 ## The [method Array2D.new] constructor creates an [Array2D] from the base [Array].
 ## [codeblock]
-## Array2D.new(width: int, height: int, type: StringName = &"", p_class_name: StringName = &"", script: Variant = null, p_array: Array = [])
+## Array2D.new(width: int = 1, height: int = 0, type: StringName = &"", p_class_name: StringName = &"", script: Variant = null, p_array: Array = [])
 ## [/codeblock]
-##
+## [b]Warning:[/b] The [param width] must be at least 1, or else the [Array2D]
+## will not properly initialize, since it needs at least one [Array] within it
+## in order for the [param height] to be calculated.
+## [br][br]
 ## You can also create a typed [Array2D]. A typed [Array2D] can only contain
 ## elements of the given type, or that inherit from the given class, as
 ## described by this constructor's parameters:
@@ -66,7 +69,7 @@ var data: Array = []
 
 
 func _init(
-		width: int = 0,
+		width: int = 1,
 		height: int = 0,
 		type: StringName = &"",
 		p_class_name: StringName = &"",
@@ -253,7 +256,8 @@ func get_row_ref(p_idx: int) -> Variant:
 	return data[p_idx]
 
 
-## Returns all of the data in the [Array2D] as an [Array] of data.
+## Returns all of the data in each row of the [Array2D] as a single [Array] of
+## data.
 func get_rows() -> Array:
 	var rows: Array = []
 	for i in data:
@@ -261,6 +265,8 @@ func get_rows() -> Array:
 	return rows
 
 
+## Sets the data for the entire given row, replacing any data currently held
+## there.
 func set_row(p_idx: int, p_row) -> void:
 	assert(len(data) > p_idx)
 	assert(p_idx >= 0)
@@ -268,6 +274,8 @@ func set_row(p_idx: int, p_row) -> void:
 	data[p_idx] = p_row
 
 
+## Sets the data for the entire given column, replacing any data currently held
+## there.
 func set_col(p_idx: int, p_col) -> void:
 	assert(len(data) > 0 and len(data[0]) > 0)
 	assert(len(data) == len(p_col))
@@ -279,6 +287,8 @@ func set_col(p_idx: int, p_col) -> void:
 		idx += 1
 
 
+## Inserts a new [Array] (representing a row) at the row index indicated by
+## [param p_idx].
 func insert_row(p_idx: int, p_array: Array) -> void:
 	if p_idx < 0:
 		data.append(p_array)
@@ -286,6 +296,7 @@ func insert_row(p_idx: int, p_array: Array) -> void:
 		data.insert(p_idx, p_array)
 
 
+## Inserts data in each row at the column index indicated by [param p_idx].
 func insert_col(p_idx: int, p_array: Array) -> void:
 	var idx = 0
 	for a_row in data:
@@ -389,19 +400,21 @@ func remove_col(p_idx: int) -> void:
 		a_row.remove(p_idx)
 
 
+## Returns the number of times [param p_value] occurs in the [Array2D].
 func count(p_value) -> int:
 	var _count = 0
 	for a_row in data:
 		for a_col in a_row:
-			if p_value == data[a_row][a_col]:
+			if p_value == a_col:
 				_count += 1
 	return _count
 
 
+## Returns true if [param p_value] exists anywhere in the [Array2D].
 func has(p_value) -> bool:
 	for a_row in data:
 		for a_col in a_row:
-			if p_value == data[a_row][a_col]:
+			if p_value == a_col:
 				return true
 	return false
 
