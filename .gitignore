@@ -14,3 +14,5 @@ data_*/
 # System/tool-specific ignores
 .directory
 *~
+/addons/gut
+/addons/_Godot-IDE_

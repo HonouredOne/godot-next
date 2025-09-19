@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 ; Engine configuration file.
 ; It's best edited using the editor UI and not directly,
 ; since the parameters that go here are not all obvious.
@@ -245,10 +246,13 @@ _global_script_class_icons={
 "VectorDisplay2D": "",
 "VectorDisplay3D": ""
 }
+=======
+config_version=5
+>>>>>>> Stashed changes
 
 [application]
 
-config/name="Godot Node Extensions"
+config/name="Godot Node Extensions (4.4)"
 config/description="Godot Node Extensions, AKA Godot NExt.
 Contains many script classes that extend Godot with new functionality."
 run/main_scene="res://demo/demo.tscn"
