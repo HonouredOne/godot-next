@@ -3,7 +3,7 @@
 
 ## Description
 
-Godot Node Extensions, AKA Godot NExt, is a Godot 3.1+ repository dedicated to collecting basic script classes that are currently unavailable in vanilla Godot.
+Godot Node Extensions, AKA Godot NExt, is a Godot 3.1+ (the current version partially supports 4.4.x) repository dedicated to collecting basic script classes that are currently unavailable in vanilla Godot.
 
 As you might have noticed, Godot Engine's initial node offerings are general purpose and are intentionally not oriented towards particular types of games.
 
