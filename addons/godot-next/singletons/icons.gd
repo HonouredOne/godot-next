@@ -1,6 +1,6 @@
-tool
+@tool
 class_name Icons
-extends Reference
+extends RefCounted
 # author: willnationsdev
 # license: MIT
 # description:
@@ -16,8 +16,8 @@ func _init() -> void:
 	register_dir("res://")
 
 
-static func fetch() -> Reference:
-	return Singletons.fetch(_this()) as Reference
+static func fetch() -> RefCounted:
+	return Singletons.fetch(_this()) as RefCounted
 
 
 static func _this() -> Script:
@@ -35,7 +35,7 @@ func register_dir(p_path: String) -> void:
 func _get_property_list():
 	var list := []
 	for a_name in data:
-		list.append(PropertyInfoFactory.new_resource(a_name, "Texture").to_dict())
+		list.append(PropertyInfoFactory.new_resource(a_name, "Texture2D").to_dict())
 	return list
 
 
@@ -54,7 +54,7 @@ func _set(p_property, p_value) -> bool:
 				return true
 			TYPE_OBJECT:
 				if p_value:
-					if p_value is Texture:
+					if p_value is Texture2D:
 						data[p_property] = p_value.resource_path
 						return true
 					else:

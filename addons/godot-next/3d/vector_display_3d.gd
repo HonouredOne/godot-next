@@ -1,13 +1,17 @@
-tool
+@tool
 class_name VectorDisplay3D
 extends Node
-# Displays Vector3 members in the editor via Position3D nodes.
+## Displays [Vector3] members in the editor via [Marker3D] nodes.
 
-export(String) var variable_name = ""
-export(bool) var relative = true
+## Used to select the variable to display.
+@export var variable_name: String = ""
+## If true, the location of the [Marker3D] shown is relative to the parent
+## [Node].[br]
+## If false, the location is relative to the global origin.
+@export var relative: bool = true
 
 var _old_variable_name = null
-var _storage: Spatial
+var _storage: Node3D
 
 
 func _process(delta):
@@ -19,7 +23,7 @@ func _process(delta):
 			return
 
 		if not _storage:
-			_storage = Spatial.new()
+			_storage = Node3D.new()
 			get_tree().get_edited_scene_root().add_child(_storage)
 			return
 
@@ -39,7 +43,7 @@ func _process(delta):
 				printerr("VectorDisplay3D: Variable '" + variable_name + "' not found or invalid on parent node '" + get_parent().get_name() + "'.")
 		elif variable is Vector3:
 			_add_position_child(variable)
-		elif variable is PoolVector3Array:
+		elif variable is PackedVector3Array:
 			for item in variable:
 				_add_position_child(item)
 		elif variable is Array:
@@ -49,7 +53,7 @@ func _process(delta):
 
 
 func _add_position_child(vector):
-	var node = Position3D.new()
+	var node = Marker3D.new()
 	node.transform.origin = vector
 	_storage.add_child(node)
 	node.set_owner(get_tree().get_edited_scene_root())

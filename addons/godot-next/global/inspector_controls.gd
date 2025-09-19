@@ -1,5 +1,5 @@
 class_name InspectorControls
-extends Reference
+extends RefCounted
 # author: xdgamestudios
 # license: MIT
 # description:
@@ -10,8 +10,8 @@ extends Reference
 const ADD_ICON = preload("res://addons/godot-next/icons/icon_add.svg")
 
 class DropdownAppender extends HBoxContainer:
-	func get_button() -> ToolButton:
-		return get_node("ToolButton") as ToolButton
+	func get_button() -> Button:
+		return get_node("Button") as Button
 
 
 	func get_dropdown() -> OptionButton:
@@ -28,8 +28,8 @@ class DropdownAppender extends HBoxContainer:
 		return get_dropdown().get_selected_metadata()
 
 
-# Instantiates a Label. If align is not set the dafault ALIGN_LEFT will be used.
-static func new_label(p_label: String, p_align: int = Label.ALIGN_LEFT) -> Label:
+# Instantiates a Label. If align is not set the dafault HORIZONTAL_ALIGNMENT_LEFT will be used.
+static func new_label(p_label: String, p_align: int = HORIZONTAL_ALIGNMENT_LEFT) -> Label:
 	var label = Label.new()
 	label.text = p_label
 	label.align = p_align
@@ -41,7 +41,7 @@ static func new_space(p_size: Vector2, p_horizontal_flag: int = Control.SIZE_EXP
 	var control = Control.new()
 	control.size_flags_horizontal = p_horizontal_flag
 	control.size_flags_vertical = p_vertical_flag
-	control.rect_min_size = p_size
+	control.custom_minimum_size = p_size
 	return control
 
 
@@ -55,26 +55,26 @@ static func new_button(p_label: String, p_toggle_mode: bool = false, p_object: O
 
 	if p_object and p_callback:
 		if p_toggle_mode:
-			button.connect("toggled", p_object, p_callback)
+			button.connect("toggled", Callable(p_object, p_callback))
 		else:
-			button.connect("pressed", p_object, p_callback)
+			button.connect("pressed", Callable(p_object, p_callback))
 
 	return button
 
 
 # Instantiates a ToolButton. If toggle mode is set, p_object/p_callback
 # will connect to its "toggled" signal. Else, "pressed".
-static func new_tool_button(p_icon: Texture, p_toggle_mode: bool = false, p_object: Object = null, p_callback: String = "") -> ToolButton:
-	var button = ToolButton.new()
+static func new_tool_button(p_icon: Texture2D, p_toggle_mode: bool = false, p_object: Object = null, p_callback: String = "") -> Button:
+	var button = Button.new()
 	button.icon = p_icon
-	button.name = "ToolButton"
+	button.name = "Button"
 	button.toggle_mode = p_toggle_mode
 
 	if p_object and p_callback:
 		if p_toggle_mode:
-			button.connect("toggled", p_object, p_callback)
+			button.connect("toggled", Callable(p_object, p_callback))
 		else:
-			button.connect("pressed", p_object, p_callback)
+			button.connect("pressed", Callable(p_object, p_callback))
 
 	return button
 
@@ -90,7 +90,7 @@ static func new_dropdown(p_elements: Dictionary, p_object: Object = null, p_call
 	dropdown.size_flags_horizontal = HBoxContainer.SIZE_EXPAND_FILL
 
 	if p_object and p_callback:
-		dropdown.connect("item_selected", p_object, p_callback, [dropdown])
+		dropdown.connect("item_selected", Callable(p_object, p_callback).bind(dropdown))
 
 	return dropdown
 
@@ -100,14 +100,14 @@ static func new_dropdown_appender(p_elements: Dictionary, p_object: Object = nul
 
 	var dropdown := new_dropdown(p_elements)
 
-	var tool_button = ToolButton.new()
-	tool_button.name = "ToolButton"
+	var tool_button = Button.new()
+	tool_button.name = "Button"
 	tool_button.icon = ADD_ICON
 
 	dropdown_appender.add_child(dropdown)
 	dropdown_appender.add_child(tool_button)
 
 	if p_object and p_callback:
-		tool_button.connect("pressed", p_object, p_callback, [dropdown_appender])
+		tool_button.connect("pressed", Callable(p_object, p_callback).bind(dropdown_appender))
 
 	return dropdown_appender

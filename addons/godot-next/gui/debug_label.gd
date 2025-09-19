@@ -1,4 +1,4 @@
-tool
+@tool
 class_name DebugLabel
 extends Label
 # author: Xrayez
@@ -22,19 +22,19 @@ enum UpdateMode {
 	MANUAL,
 }
 
-export(UpdateMode) var update_mode = UpdateMode.IDLE setget set_update_mode
+@export var update_mode: UpdateMode = UpdateMode.IDLE: set = set_update_mode
 
 # Assign a node via inspector. If empty, a parent node is inspected instead.
-export var target_path := NodePath() setget set_target_path
+@export var target_path := NodePath(): set = set_target_path
 
-export var show_label_name := false
-export var show_target_name := false
+@export var show_label_name := false
+@export var show_target_name := false
 
 # A list of property names to be inspected and printed in the `target`.
 # Use indexed syntax (:) to access nested properties: "position:x".
 # Indexing will also work with any `onready` vars defined via script.
 # These can be set beforehand via inspector or via code with "watch()".
-export var properties := PoolStringArray()
+@export var properties := PackedStringArray()
 
 # Inspected object, not restricted to "Node" type, may be assigned via code.
 var target: Object
@@ -101,10 +101,10 @@ func set_update_mode(p_mode: int) -> void:
 
 
 func watch(p_what: String) -> void:
-	properties = PoolStringArray([p_what])
+	properties = PackedStringArray([p_what])
 
 
-func watchv(p_what: PoolStringArray) -> void:
+func watchv(p_what: PackedStringArray) -> void:
 	properties = p_what
 
 
@@ -112,18 +112,18 @@ func watch_append(p_what: String) -> void:
 	properties.append(p_what)
 
 
-func watch_appendv(p_what: PoolStringArray) -> void:
+func watch_appendv(p_what: PackedStringArray) -> void:
 	properties.append_array(p_what)
 
 
 func clear() -> void:
-	properties = PoolStringArray()
+	properties = PackedStringArray()
 
 
 func update() -> void:
 	# Have to be called manually if operating in UpdateMode.MANUAL
 	_update_debug_info()
-	.update()
+	super.queue_redraw()
 
 
 func _update_debug_info() -> void:
@@ -147,13 +147,13 @@ func _update_debug_info() -> void:
 		elif target is Resource:
 			object_name = target.resource_name
 
-		if not object_name.empty():
+		if not object_name.is_empty():
 			text += "%s\n" % [object_name]
 
 	for prop in properties:
-		if prop.empty():
+		if prop.is_empty():
 			continue
-		var var_str = var2str(target.get_indexed(prop))
+		var var_str = var_to_str(target.get_indexed(prop))
 		text += "%s = %s\n" % [prop, var_str]
 
 

@@ -1,10 +1,14 @@
-tool
+@tool
 class_name VectorDisplay2D
 extends Node
-# Displays Vector2 members in the editor via Position2D nodes.
+## Displays [Vector2] members in the editor via [Marker2D] nodes.
 
-export(String) var variable_name = ""
-export(bool) var relative = true
+## Used to select the variable to display.
+@export var variable_name: String = ""
+## If true, the location of the [Marker2D] shown is relative to the parent
+## [Node].[br]
+## If false, the location is relative to the global origin.
+@export var relative: bool = true
 
 var _old_variable_name = null
 var _storage: Node2D
@@ -39,7 +43,7 @@ func _process(delta):
 				printerr("VectorDisplay2D: Variable '" + variable_name + "' not found or invalid on parent node '" + get_parent().get_name() + "'.")
 		elif variable is Vector2:
 			_add_position_child(variable)
-		elif variable is PoolVector2Array:
+		elif variable is PackedVector2Array:
 			for item in variable:
 				_add_position_child(item)
 		elif variable is Array:
@@ -49,7 +53,7 @@ func _process(delta):
 
 
 func _add_position_child(vector):
-	var node = Position2D.new()
+	var node = Marker2D.new()
 	node.transform.origin = vector
 	_storage.add_child(node)
 	node.set_owner(get_tree().get_edited_scene_root())

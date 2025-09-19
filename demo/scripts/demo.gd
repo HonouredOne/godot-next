@@ -17,4 +17,4 @@ func _ready():
 	var bitset = Bitset.new(5)
 	bitset.set_bit(2, true)
 	bitset.set_bit(3, true)
-	bitset.print_bits(false)
+	bitset.print_bits()

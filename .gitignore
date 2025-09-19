@@ -1,8 +1,20 @@
 
 # Godot-specific ignores
-.import/
+*.gdignore
+*.import
 export.cfg
 export_presets.cfg
+*.gd.uid
+/.godot/editor
+/.godot
+*.tmp
+
+# Godot add-ons
+addons/script-ide
+addons/gut
+
+# GUT tests
+test
 
 # Imported translations (automatically generated from CSV files)
 *.translation
@@ -16,3 +28,5 @@ data_*/
 *~
 /addons/gut
 /addons/_Godot-IDE_
+/hello
+/.godot_ide

@@ -1,4 +1,4 @@
-tool
+@tool
 class_name Behavior
 extends Resource
 # author: xdgamestudios
@@ -21,10 +21,10 @@ extends Resource
 #		- If the behavior is disabled its notifications will not be processed.
 
 # A reference to the owning Behaviors node.
-var owner: Node = null setget set_owner, get_owner
+var owner: Node = null: get = get_owner, set = set_owner
 
 # Allows users to toggle processing callbacks on the owner.
-var enabled: bool = true setget set_enabled, get_enabled
+var enabled: bool = true: get = get_enabled, set = set_enabled
 
 # This name is used to match the convention in Unity's MonoBehaviour class.
 func _awake() -> void:

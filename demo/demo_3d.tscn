@@ -1,41 +1,48 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=3 uid="uid://b8spv7gkp4eoh"]
 
-[ext_resource path="res://addons/godot-next/3d/trail_3d.gd" type="Script" id=1]
-[ext_resource path="res://demo/scripts/wandering_node_3d.gd" type="Script" id=2]
-[ext_resource path="res://addons/godot-next/3d/vector_display_3d.gd" type="Script" id=3]
-[ext_resource path="res://demo/scripts/test_vector_display.gd" type="Script" id=4]
+[ext_resource type="Script" uid="uid://ccmamrrx1th0u" path="res://demo/scripts/wandering_node_3d.gd" id="2"]
+[ext_resource type="Script" uid="uid://dxbskps2j53u3" path="res://addons/godot-next/3d/trail_3d.gd" id="2_hbnbm"]
+[ext_resource type="Script" uid="uid://b2ptbxolxjpmt" path="res://addons/godot-next/3d/vector_display_3d.gd" id="3"]
+[ext_resource type="Script" uid="uid://cnl0dvcf6shik" path="res://demo/scripts/test_vector_display.gd" id="4"]
 
-[sub_resource type="Gradient" id=1]
-colors = PoolColorArray( 0, 0.25, 1, 1, 0, 0, 0, 1 )
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_dvcmk"]
 
-[sub_resource type="GradientTexture" id=2]
-gradient = SubResource( 1 )
+[sub_resource type="Sky" id="Sky_dvcmk"]
+sky_material = SubResource("ProceduralSkyMaterial_dvcmk")
 
-[sub_resource type="SpatialMaterial" id=3]
-flags_unshaded = true
-albedo_texture = SubResource( 2 )
+[sub_resource type="Environment" id="Environment_dvcmk"]
+background_mode = 2
+sky = SubResource("Sky_dvcmk")
 
-[node name="Demo3D" type="Spatial"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dvcmk"]
+albedo_color = Color(0.288234, 0.479317, 0.884496, 1)
 
-[node name="WanderingNode3D" type="Spatial" parent="."]
-script = ExtResource( 2 )
+[node name="Demo3D" type="Node3D"]
 
-[node name="Trail3D" type="ImmediateGeometry" parent="WanderingNode3D"]
-material_override = SubResource( 3 )
-script = ExtResource( 1 )
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_dvcmk")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+
+[node name="WanderingNode3D" type="Node3D" parent="."]
+script = ExtResource("2")
+
+[node name="Trail3D" type="MeshInstance3D" parent="WanderingNode3D"]
+material_override = SubResource("StandardMaterial3D_dvcmk")
+skeleton = NodePath("../..")
+script = ExtResource("2_hbnbm")
 length = 5.0
-max_radius = 0.25
-density_lengthwise = 50
-density_around = 20
+shape = 0.0
+metadata/_custom_type_script = "uid://dxbskps2j53u3"
 
-[node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0, 2, 8 )
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0, 2, 8)
 
-[node name="TestVectorDisplay3D" type="Spatial" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0.5 )
-script = ExtResource( 4 )
-pool_vector3_array = PoolVector3Array( 1, 0, 2, 2, 0, 1 )
+[node name="TestVectorDisplay3D" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0.5)
+script = ExtResource("4")
+packed_vector2_array = PackedVector2Array(2, 4)
 
 [node name="VectorDisplay3D" type="Node" parent="TestVectorDisplay3D"]
-script = ExtResource( 3 )
-variable_name = "pool_vector3_array"
+script = ExtResource("3")
+variable_name = "packed_vector2_array"

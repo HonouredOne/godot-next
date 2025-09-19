@@ -1,4 +1,4 @@
-tool
+@tool
 extends EditorInspectorPlugin
 # author: willnationsdev and xdgamestudios
 # license: MIT

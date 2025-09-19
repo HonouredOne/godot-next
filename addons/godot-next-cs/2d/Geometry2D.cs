@@ -1,7 +1,7 @@
 using Godot;
 
 [Tool]
-public class Geometry2D : CollisionShape2D
+public partial class Geometry2D : CollisionShape2D
 {
     private Color _color = Colors.White;
     private Vector2 _offsetPosition;
@@ -11,19 +11,19 @@ public class Geometry2D : CollisionShape2D
 
     public override void _Draw()
     {
-        if (Shape is CircleShape2D)
+        if (Shape3D is CircleShape2D)
         {
-            DrawCircle(_offsetPosition, ((CircleShape2D)Shape).Radius, _color);
+            DrawCircle(_offsetPosition, ((CircleShape2D)Shape3D).Radius, _color);
         }
-        else if (Shape is RectangleShape2D)
+        else if (Shape3D is RectangleShape2D)
         {
-            RectangleShape2D rectangleShape = (RectangleShape2D)Shape;
+            RectangleShape2D rectangleShape = (RectangleShape2D)Shape3D;
             Rect2 rect = new Rect2(_offsetPosition - rectangleShape.Extents, rectangleShape.Extents * 2.0f);
             DrawRect(rect, _color);
         }
-        else if (Shape is CapsuleShape2D)
+        else if (Shape3D is CapsuleShape2D)
         {
-            CapsuleShape2D capsuleShape = (CapsuleShape2D)Shape;
+            CapsuleShape2D capsuleShape = (CapsuleShape2D)Shape3D;
             DrawCapsule(_offsetPosition, capsuleShape.Radius, capsuleShape.Height, _color);
         }
     }

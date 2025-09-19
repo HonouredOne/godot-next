@@ -2,6 +2,8 @@ res://default_env.tres
 res://demo/demo_2d.tscn
 res://addons/godot-next/data/singleton_cache.tres
 res://addons/_Godot-IDE_/IDE.gd
+res://addons/gut/test.gd
+res://test/unit/test_example.gd
 res://test/unit/test_array_2d.gd
 res://demo/demo.tscn
 res://demo/demo_3d.tscn

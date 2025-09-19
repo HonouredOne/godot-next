@@ -1,4 +1,4 @@
-tool
+@tool
 class_name DiscreteGradientTexture
 extends ImageTexture
 # author: Athrunen
@@ -8,8 +8,8 @@ extends ImageTexture
 #	- Write a more elegant way of updating the texture than changing the resolution.
 #	- Persuade Godot to repeat the texture vertically in the inspector.
 
-export var resolution: int = 256 setget _update_resolution
-export var gradient: Gradient = Gradient.new() setget _update_gradient
+@export var resolution: int = 256: set = _update_resolution
+@export var gradient: Gradient = Gradient.new(): set = _update_gradient
 
 func _ready() -> void:
 	_update_texture()
@@ -22,7 +22,7 @@ func _update_texture() -> void:
 	if not gradient:
 		return
 
-	image.lock()
+	false # image.lock() # TODOConverter3To4, Image no longer requires locking, `false` helps to not break one line if/else, so it can freely be removed
 
 	var last_offset := 0
 	var last_pixel := 0
@@ -43,8 +43,8 @@ func _update_texture() -> void:
 		for x in resolution - last_pixel:
 			image.set_pixel(x + last_pixel, 0, color)
 
-	image.unlock()
-	self.create_from_image(image, 0)
+	false # image.unlock() # TODOConverter3To4, Image no longer requires locking, `false` helps to not break one line if/else, so it can freely be removed
+	self.create_from_image(image) #,0
 
 
 func _update_gradient(g: Gradient) -> void:
